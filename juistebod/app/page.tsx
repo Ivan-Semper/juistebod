@@ -5,9 +5,11 @@ import Image from "next/image";
 import PropertyForm from "./components/PropertyForm";
 import GoogleMap from "./components/GoogleMap";
 import { PropertyData } from "@/lib/types/PropertyTypes";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
+  const router = useRouter();
 
   const handlePropertyFound = (data: PropertyData) => {
     setPropertyData(data);
@@ -18,6 +20,14 @@ export default function Home() {
         resultsSection.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  };
+
+  const handleProceedToCheckout = () => {
+    if (propertyData) {
+      // Store property data in session storage for checkout page
+      sessionStorage.setItem('propertyData', JSON.stringify(propertyData));
+      router.push('/checkout');
+    }
   };
 
   return (
@@ -107,20 +117,28 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Next Steps */}
-              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-                <h4 className="text-lg font-semibold mb-4 text-gray-800">Volgende Stap</h4>
-                <p className="text-gray-800 mb-4">
-                  Nu we je woning hebben geanalyseerd, kunnen we een professioneel bodadvies opstellen.
+              {/* Data Confirmation Section */}
+              <div className="mt-8 p-6 rounded-lg border-2 border-gray-200">
+                <h4 className="text-xl font-semibold mb-4 text-gray-800">Kloppen deze gegevens?</h4>
+                <p className="text-gray-700 mb-6">
+                  Controleer of de bovenstaande informatie correct is. Op basis van deze gegevens stellen wij ons professionele bodadvies op.
                 </p>
-                <button 
-                  className="text-white px-8 py-3 rounded-full font-medium transition-colors"
-                  style={{ backgroundColor: '#1F3C88' }}
-                  onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#1a3278'}
-                  onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#1F3C88'}
-                >
-                  Ga verder naar betaling
-                </button>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button 
+                    onClick={handleProceedToCheckout}
+                    className="text-white px-8 py-3 rounded-full font-medium transition-all transform hover:scale-105"
+                    style={{ backgroundColor: '#1F3C88' }}
+                  >
+                    ✓ Ja, ga verder
+                  </button>
+                  <button 
+                    onClick={() => setPropertyData(null)}
+                    className="text-gray-700 border-2 border-gray-300 px-8 py-3 rounded-full font-medium transition-all hover:bg-gray-50"
+                  >
+                    Nee, opnieuw zoeken
+                  </button>
+                </div>
               </div>
             </div>
           </div>

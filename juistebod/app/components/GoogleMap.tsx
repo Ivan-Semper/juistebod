@@ -7,9 +7,10 @@ interface GoogleMapProps {
   address: string;
   propertyTitle: string;
   onMapLoaded?: () => void;
+  fullScreen?: boolean;
 }
 
-export default function GoogleMap({ address, propertyTitle, onMapLoaded }: GoogleMapProps) {
+export default function GoogleMap({ address, propertyTitle, onMapLoaded, fullScreen = false }: GoogleMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -230,7 +231,7 @@ export default function GoogleMap({ address, propertyTitle, onMapLoaded }: Googl
 
   if (error) {
     return (
-      <div className="w-full h-64 bg-gray-50 rounded-lg flex items-center justify-center border">
+      <div className={`w-full ${fullScreen ? 'h-screen' : 'h-64'} ${fullScreen ? 'bg-gray-100' : 'bg-gray-50'} ${fullScreen ? '' : 'rounded-lg'} flex items-center justify-center ${fullScreen ? '' : 'border'}`}>
         <div className="text-center text-gray-600">
           <p className="text-sm">{error}</p>
           <p className="text-xs mt-2 opacity-75">Adres: {address}</p>
@@ -240,7 +241,7 @@ export default function GoogleMap({ address, propertyTitle, onMapLoaded }: Googl
   }
 
   return (
-    <div className="relative w-full h-64 bg-gray-50 rounded-lg overflow-hidden border">
+    <div className={`relative w-full ${fullScreen ? 'h-screen' : 'h-64'} ${fullScreen ? 'bg-gray-100' : 'bg-gray-50'} ${fullScreen ? '' : 'rounded-lg'} overflow-hidden ${fullScreen ? '' : 'border'}`}>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
           <div className="text-center">
