@@ -1,0 +1,64 @@
+1. Landingspagina (home)
+• Grote hero-sectie met een inputveld voor de woninglink (Funda, Jaap, etc.)
+• CTA-knop: “Ontvang jouw bodadvies”
+• Onder de hero-sectie:
+• Uitleg over de dienst
+• Infographics (3 simpele stappen)
+• Waarom géén AI, maar een expert
+• Voordelen t.o.v. concurrenten
+• Klantrecensie(s) (optioneel)
+• Footer met contact, privacybeleid, etc.
+2. Stap 1 – Linkanalyse en locatiekaart
+• Nadat de gebruiker zijn link heeft ingevuld:
+• We tonen een kaart (bijv. via Leaflet of Google Maps API) met de locatie
+van de woning op de achtergrond
+• Dit geeft vertrouwen en overzicht
+3. Stap 2 – Formulier (Contact)
+• Veld 1: Voornaam
+• Veld 2: Achternaam
+• Veld 3: E-mailadres
+• Veld 4: Geslacht (optioneel dropdown)
+• CTA-knop: “Ga door naar betaling”
+4. Stap 3 – Betaalscherm
+• Eén duidelijk aanbod:
+“Professioneel bodadvies voor €39,95”
+• Betaalmogelijkheden: iDEAL, Creditcard, eventueel PayPal
+• Na betaling een bevestigingspagina met melding:
+“Bedankt! Je ontvangt binnen 24 uur jouw rapport per e-mail.”
+Designrichtlijnen
+• Stijl: Clean, rustgevend, professioneel
+• Inspiratie: Muji, Apple, Dropbox
+• Kleurenpalet:
+• Donkerblauw (#1F3C88)
+• Olijfgroen of grijsgroen als accent
+• Off-white achtergrond (#FAF9F6)
+• Lettertype: Modern, schreefloos (bijv. Lato, Poppins of Inter)
+• Iconografie: Minimalistisch en vriendelijk (voor de infographics)
+Technische vereisten
+• Responsive design (mobiel en desktop)
+• Snel ladend
+• GDPR-proof (toestemming voor e-mail verwerken)
+• Eenvoudig content aanpasbaar (via CMS zoals Webflow, Framer of een
+simpele backend)
+• Betaalfunctionaliteit (bijv. via Mollie of Stripe)
+• Kaart-integratie (Leaflet of Google Maps)
+Backend/logica
+• Verwerking van formulier + betaling
+• Na succesvolle betaling:
+• Rapport-aanvraag + gegevens worden automatisch naar jouw e-mailadres
+of dashboard gestuurd
+• Klant ontvangt bevestigingsmail
+Wat ik nog moet aanleveren (vanuit JuisteBod.nl):
+• Logo + huisstijl (geleverd)
+• Teksten (kan ik nog schrijven samen met ChatGPT)
+• Infographic elementen of ideeën
+• Privacybeleid + algemene voorwaarden
+
+🔧 Aanbevolen Technologie Stack – JuisteBod.nl
+
+Frontend:           Next.js + TypeScript
+CMS:                Webflow, Sanity of Strapi
+Betaalmodule:       Mollie of Stripe API (JavaScript SDK)
+Kaart (locatie):    Leaflet.js of Google Maps JavaScript API
+Backend/API:        Serverless via Next.js API routes of Node.js (Express)
+E-mailing:          Resend, SendGrid of Mailgun
