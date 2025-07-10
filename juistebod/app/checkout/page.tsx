@@ -21,11 +21,54 @@ export default function CheckoutPage() {
     }
   }, [router]);
 
-  const handleFormSubmit = (formData: any) => {
-    // Handle form submission - later integrate with payment processing
-    console.log('Form submitted:', formData);
-    // For now, just show success message
-    alert('Bedankt! Je aanvraag is ontvangen. We nemen binnen 24 uur contact met je op.');
+  const handleFormSubmit = async (formData: any) => {
+    try {
+      // Prepare the data for the API
+      const orderData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        age: formData.age,
+        currentSituation: formData.currentSituation,
+        budgetRange: formData.budgetRange,
+        firstTimeBuyer: formData.firstTimeBuyer,
+        urgency: formData.urgency,
+        additionalInfo: formData.additionalInfo,
+        propertyUrl: propertyData?.url || '',
+        propertyAddress: propertyData?.address || '',
+        propertyPrice: propertyData?.price || '',
+        propertyData: propertyData
+      };
+
+      // Save order to database
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Store order ID for later use
+        sessionStorage.setItem('orderId', result.data.orderId);
+        
+        // Success message
+        alert(`Bedankt ${formData.firstName}! Je aanvraag is ontvangen. We nemen binnen 24 uur contact met je op via ${formData.email}.`);
+        
+        // Redirect to success page or home
+        router.push('/');
+      } else {
+        throw new Error(result.error || 'Failed to create order');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Er is een fout opgetreden. Probeer het opnieuw of neem contact met ons op.');
+    }
   };
 
   if (!propertyData) {

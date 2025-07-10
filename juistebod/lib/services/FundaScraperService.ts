@@ -31,7 +31,7 @@ export class FundaScraperService {
       const propertyData: PropertyData = {
         url,
         title: this.extractTitle($),
-        address: this.extractAddress($),
+        address: this.extractAddress($, url),
         price: this.extractPrice($),
         location: this.extractLocation($),
         propertyType: this.extractPropertyType($),
@@ -60,18 +60,59 @@ export class FundaScraperService {
       .trim() || 'Title not found';
   }
 
-  private extractAddress($: cheerio.CheerioAPI): string {
-    const street = $('.object-header__subtitle, [data-test-id="street-name-house-number"]')
-      .first()
-      .text()
-      .trim();
-    
-    const city = $('.object-header__subtitle, [data-test-id="city"]')
-      .last()
-      .text()
-      .trim();
+  private extractAddress($: cheerio.CheerioAPI, url: string): string {
+    // Try multiple selectors for address extraction
+    const addressSelectors = [
+      '.object-header__subtitle',
+      '[data-test-id="street-name-house-number"]',
+      '.object-header h1 + p',
+      '.object-header__address',
+      '.address-text',
+      'h1 + div',
+      '.object-header .subtitle',
+      '.object-header div:nth-child(2)',
+      '.object-header p'
+    ];
 
-    return `${street}, ${city}`.replace(/^,\s*/, '').replace(/,\s*$/, '') || 'Address not found';
+    for (const selector of addressSelectors) {
+      const address = $(selector).first().text().trim();
+      if (address && address.length > 10 && !address.includes('€')) {
+        return address;
+      }
+    }
+
+    // Try to extract from title if available
+    const title = this.extractTitle($);
+    if (title && title.includes(',')) {
+      const parts = title.split(',');
+      if (parts.length >= 2) {
+        return `${parts[0].trim()}, ${parts[1].trim()}`;
+      }
+    }
+
+    // Fallback: extract from URL
+    return this.extractAddressFromUrl(url) || 'Address not found';
+  }
+
+  private extractAddressFromUrl(url: string): string | null {
+    try {
+      // Extract from Funda URL pattern: /koop/city/huis-streetname-number/id/
+      const match = url.match(/\/koop\/([^\/]+)\/huis-([^\/]+)\/\d+\//);
+      if (match) {
+        const city = match[1].replace(/-/g, ' ');
+        const streetWithNumber = match[2].replace(/-/g, ' ');
+        
+        // Capitalize first letter of each word
+        const formattedCity = city.replace(/\b\w/g, l => l.toUpperCase());
+        const formattedStreet = streetWithNumber.replace(/\b\w/g, l => l.toUpperCase());
+        
+        return `${formattedStreet}, ${formattedCity}`;
+      }
+    } catch (error) {
+      console.warn('Could not extract address from URL:', error);
+    }
+    
+    return null;
   }
 
   private extractPrice($: cheerio.CheerioAPI): string {

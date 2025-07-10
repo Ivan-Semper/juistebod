@@ -6,6 +6,15 @@ import PropertyForm from "./components/PropertyForm";
 import GoogleMap from "./components/GoogleMap";
 import { PropertyData } from "@/lib/types/PropertyTypes";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { 
+  useScrollAnimation, 
+  fadeInUp, 
+  fadeInLeft, 
+  fadeInRight, 
+  staggerContainer, 
+  scaleIn 
+} from "@/lib/hooks/useScrollAnimation";
 
 export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
@@ -48,15 +57,31 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 text-center text-white max-w-2xl px-6">
-          <p className="text-lg md:text-xl font-light mb-4 opacity-90">
-            het juiste bod op elke woning
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold mb-12 leading-tight">
+          <motion.p 
+            className="text-lg md:text-xl font-light mb-4 opacity-90"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <span className="underline">Het juiste bod op elke woning</span>
+          </motion.p>
+          <motion.h1 
+            className="text-4xl md:text-6xl font-bold mb-12 leading-tight"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
             Binnen 24 uur persoonlijk advies.
-          </h1>
+          </motion.h1>
           
           {/* Property Form */}
-          <PropertyForm onPropertyFound={handlePropertyFound} />
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <PropertyForm onPropertyFound={handlePropertyFound} />
+          </motion.div>
         </div>
       </section>
 
@@ -64,7 +89,12 @@ export default function Home() {
       {propertyData && (
         <section id="property-results" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <motion.div 
+              className="bg-white rounded-lg shadow-lg p-8 mb-8"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
               <h2 className="text-3xl font-bold mb-6 text-gray-800">
                 Woning Gegevens
               </h2>
@@ -125,22 +155,44 @@ export default function Home() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button 
+                  <motion.button 
                     onClick={handleProceedToCheckout}
-                    className="text-white px-8 py-3 rounded-full font-medium transition-all transform hover:scale-105"
+                    className="text-white px-8 py-3 rounded-full font-medium transition-all"
                     style={{ backgroundColor: '#1F3C88' }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 10px 25px rgba(31, 60, 136, 0.3)",
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ 
+                      scale: 0.98,
+                      transition: { duration: 0.1 }
+                    }}
+                    animate={{
+                      boxShadow: "0 4px 15px rgba(31, 60, 136, 0.2)"
+                    }}
                   >
                     ✓ Ja, ga verder
-                  </button>
-                  <button 
+                  </motion.button>
+                  <motion.button 
                     onClick={() => setPropertyData(null)}
-                    className="text-gray-700 border-2 border-gray-300 px-8 py-3 rounded-full font-medium transition-all hover:bg-gray-50"
+                    className="text-gray-700 border-2 border-gray-300 px-8 py-3 rounded-full font-medium transition-all"
+                    whileHover={{ 
+                      scale: 1.02,
+                      backgroundColor: "#f9fafb",
+                      borderColor: "#9ca3af",
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ 
+                      scale: 0.98,
+                      transition: { duration: 0.1 }
+                    }}
                   >
                     Nee, opnieuw zoeken
-                  </button>
+                  </motion.button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
@@ -149,104 +201,192 @@ export default function Home() {
       <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Illustration */}
-            <div className="flex justify-center md:justify-start">
+            {/* Logo - Animated from left */}
+            <motion.div 
+              className="flex justify-center md:justify-start"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={fadeInLeft}
+            >
               <div className="w-64 h-64 flex items-center justify-center">
-                {/* Clean minimalist scale illustration with accent color */}
-                <div className="relative">
-                  <svg width="200" height="200" viewBox="0 0 200 200" style={{ color: '#7C8471' }}>
-                    {/* Stick figure head */}
-                    <circle cx="100" cy="40" r="20" stroke="currentColor" strokeWidth="3" fill="none" />
-                    
-                    {/* Stick figure body */}
-                    <line x1="100" y1="60" x2="100" y2="120" stroke="currentColor" strokeWidth="3" />
-                    
-                    {/* Arms holding scale */}
-                    <line x1="100" y1="80" x2="60" y2="70" stroke="currentColor" strokeWidth="3" />
-                    <line x1="100" y1="80" x2="140" y2="70" stroke="currentColor" strokeWidth="3" />
-                    
-                    {/* Scale crossbar */}
-                    <line x1="60" y1="70" x2="140" y2="70" stroke="currentColor" strokeWidth="3" />
-                    
-                    {/* Scale pans */}
-                    <ellipse cx="60" cy="70" rx="15" ry="8" stroke="currentColor" strokeWidth="2" fill="none" />
-                    <ellipse cx="140" cy="70" rx="15" ry="8" stroke="currentColor" strokeWidth="2" fill="none" />
-                    
-                    {/* Legs */}
-                    <line x1="100" y1="120" x2="80" y2="160" stroke="currentColor" strokeWidth="3" />
-                    <line x1="100" y1="120" x2="120" y2="160" stroke="currentColor" strokeWidth="3" />
-                  </svg>
-                </div>
+                <Image
+                  src="/weegschaal.png"
+                  alt="JuisteBod.nl Logo - Weegschaal"
+                  width={300}
+                  height={300}
+                  className="object-contain"
+                  priority
+                />
               </div>
-            </div>
+            </motion.div>
 
-            {/* Text Content */}
-            <div className="text-gray-800 space-y-6">
+            {/* Text Content - Animated from right */}
+            <motion.div 
+              className="text-gray-800 space-y-6"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={fadeInRight}
+            >
               <p className="text-lg leading-relaxed">
                 Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning zonder dat daar hoge makelaarskosten bij komen kijken.
               </p>
               <p className="text-lg leading-relaxed">
                 Onze missie is om woningzoekers snel, helder en betaalbaar te helpen bij het bepalen van een bod. Zodat je met vertrouwen en kennis van de markt je volgende stap kan zetten!
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
       <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-20 text-gray-800">
+        <div className="max-w-6xl mx-auto text-center">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold mb-20 text-gray-800"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
             Zo werkt het
-          </h2>
+          </motion.h2>
           
-          <div className="grid md:grid-cols-3 gap-16 mb-16">
-            <div className="text-center">
+          <motion.div 
+            className="grid md:grid-cols-3 gap-12 mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            {/* Stap 1 */}
+            <motion.div className="relative text-center" variants={fadeInUp}>
               <div 
-                className="w-3 h-3 rounded-full mx-auto mb-8"
-                style={{ backgroundColor: '#7C8471' }}
-              ></div>
-              <h3 className="text-2xl font-bold mb-8 text-gray-800">Woninglink</h3>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Plak de link van je droomwoning en wij doen de rest
+                className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-bold"
+                style={{ backgroundColor: '#1F3C88' }}
+              >
+                1
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">Plak je Funda link</h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                Kopieer de URL van de woning die je wilt kopen en plak deze in ons formulier
               </p>
+              <div className="text-sm text-gray-500 bg-white rounded-lg p-4 mx-auto max-w-xs">
+                💡 <strong>Tip:</strong> Werkt met alle Funda woningen
+              </div>
+              
+              {/* Arrow */}
+              <div className="hidden md:block absolute -right-6 top-8">
+                <svg width="48" height="24" viewBox="0 0 48 24" className="text-gray-300">
+                  <path d="M36 12L40 8V10H48V14H40V16L36 12Z" fill="currentColor"/>
+                  <path d="M0 11H36V13H0V11Z" fill="currentColor"/>
+                </svg>
+              </div>
+            </motion.div>
+            
+            {/* Stap 2 */}
+            <motion.div className="relative text-center" variants={fadeInUp}>
+              <div 
+                className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-bold"
+                style={{ backgroundColor: '#1F3C88' }}
+              >
+                2
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">Vul je gegevens in</h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                Vertel ons over jezelf en je woonsituatie voor een persoonlijk advies
+              </p>
+              <div className="text-sm text-gray-500 bg-white rounded-lg p-4 mx-auto max-w-xs">
+                🔒 <strong>Veilig:</strong> Al je gegevens worden veilig opgeslagen
+              </div>
+              
+              {/* Arrow */}
+              <div className="hidden md:block absolute -right-6 top-8">
+                <svg width="48" height="24" viewBox="0 0 48 24" className="text-gray-300">
+                  <path d="M36 12L40 8V10H48V14H40V16L36 12Z" fill="currentColor"/>
+                  <path d="M0 11H36V13H0V11Z" fill="currentColor"/>
+                </svg>
+              </div>
+            </motion.div>
+            
+            {/* Stap 3 */}
+            <motion.div className="text-center" variants={fadeInUp}>
+              <div 
+                className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-bold"
+                style={{ backgroundColor: '#7C8471' }}
+              >
+                3
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">Ontvang je rapport</h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                Binnen 24 uur krijg je een uitgebreid bodadvies in je mailbox
+              </p>
+              <div className="text-sm text-gray-500 bg-white rounded-lg p-4 mx-auto max-w-xs">
+                ⚡ <strong>Snel:</strong> Gemiddeld binnen 12 uur geleverd
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Extra info */}
+          <motion.div 
+            className="bg-white rounded-xl p-8 shadow-lg max-w-4xl mx-auto"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={scaleIn}
+          >
+            <h3 className="text-2xl font-bold mb-6 text-gray-800">Wat krijg je precies?</h3>
+            <div className="grid md:grid-cols-2 gap-8 text-left">
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-3">📊 Marktanalyse</h4>
+                <ul className="text-gray-600 space-y-2">
+                  <li>• Vergelijking met soortgelijke woningen</li>
+                  <li>• Prijsontwikkeling in de buurt</li>
+                  <li>• Marktcondities en vraag/aanbod</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-3">💡 Persoonlijk advies</h4>
+                <ul className="text-gray-600 space-y-2">
+                  <li>• Optimaal bodbedrag op basis van markt</li>
+                  <li>• Onderhandelingsstrategie</li>
+                  <li>• Tips voor het biedingsproces</li>
+                </ul>
+              </div>
             </div>
             
-            <div className="text-center">
-              <div 
-                className="w-3 h-3 rounded-full mx-auto mb-8"
-                style={{ backgroundColor: '#7C8471' }}
-              ></div>
-              <h3 className="text-2xl font-bold mb-8 text-gray-800">Betaal</h3>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Veilig en snel betalen voor professioneel advies
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <p className="text-lg font-semibold" style={{ color: '#1F3C88' }}>
+                ✅ Alles voor slechts €49 - Geen verborgen kosten
               </p>
             </div>
-            
-            <div className="text-center">
-              <div 
-                className="w-3 h-3 rounded-full mx-auto mb-8"
-                style={{ backgroundColor: '#7C8471' }}
-              ></div>
-              <h3 className="text-2xl font-bold mb-8 text-gray-800">juiste bod</h3>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Ontvang binnen 24 uur je persoonlijke bodadvies
-              </p>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Testimonials Section */}
       <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold mb-20 text-center text-gray-800">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold mb-20 text-center text-gray-800"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
             Tevreden klanten
-          </h2>
+          </motion.h2>
           
-          <div className="grid md:grid-cols-3 gap-12">
+          <motion.div 
+            className="grid md:grid-cols-3 gap-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
             {/* Testimonial 1 */}
-            <div className="text-center">
+            <motion.div className="text-center" variants={fadeInUp}>
               <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>"</div>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                 Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.
@@ -254,10 +394,10 @@ export default function Home() {
               <div className="font-semibold text-gray-800 text-lg">
                 Nathalie Louwers
               </div>
-            </div>
+            </motion.div>
 
             {/* Testimonial 2 */}
-            <div className="text-center">
+            <motion.div className="text-center" variants={fadeInUp}>
               <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>"</div>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                 Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.
@@ -265,10 +405,10 @@ export default function Home() {
               <div className="font-semibold text-gray-800 text-lg">
                 Ellis Steenhuis
               </div>
-            </div>
+            </motion.div>
 
             {/* Testimonial 3 */}
-            <div className="text-center">
+            <motion.div className="text-center" variants={fadeInUp}>
               <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>"</div>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                 Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.
@@ -276,8 +416,8 @@ export default function Home() {
               <div className="font-semibold text-gray-800 text-lg">
                 Lillian Frayers
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -290,7 +430,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-4 text-gray-800">
                 Juistebod.nl
               </h3>
-              <p className="text-lg" style={{ color: '#7C8471' }}>
+              <p className="text-lg underline" style={{ color: '#7C8471' }}>
                 Het juiste bod op elke woning
               </p>
             </div>
