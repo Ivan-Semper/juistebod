@@ -256,7 +256,7 @@ export const weegschaalDropDramatic = {
 export const weegschaalSlideFromLeft = {
   hidden: { 
     opacity: 1, 
-    x: -400, // Start ver links buiten het scherm
+    x: -250, // Start zodat arm uit het scherm komt, maar weegschaal zichtbaar blijft
     scale: 1,
     rotate: 0
   },
@@ -267,10 +267,10 @@ export const weegschaalSlideFromLeft = {
     rotate: 0,
     transition: { 
       x: { 
-        duration: 1.2, 
+        duration: 1.2, // Snappiger animatie
         ease: [0.25, 0.46, 0.45, 0.94],
         type: "spring",
-        stiffness: 60,
+        stiffness: 60, // Meer stiffness voor meer impact
         damping: 15
       },
       opacity: { duration: 0.6 }

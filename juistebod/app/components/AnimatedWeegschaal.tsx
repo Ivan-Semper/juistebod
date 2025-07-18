@@ -1,16 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { useState } from "react";
-import { 
-  weegschaalBalance, 
-  weegschaalFloat, 
-  weegschaalPulse,
-  weegschaalDrop,
-  weegschaalDropDramatic,
-  weegschaalSlideFromLeft
-} from "@/lib/hooks/useScrollAnimation";
+import { useState, useRef, useEffect } from "react";
 
 interface AnimatedWeegschaalProps {
   animationType?: 'balance' | 'float' | 'pulse' | 'drop' | 'dropDramatic' | 'slideFromLeft' | 'none';
@@ -28,79 +18,64 @@ export default function AnimatedWeegschaal({
   showRefreshButton = false
 }: AnimatedWeegschaalProps) {
   
-  const [animationKey, setAnimationKey] = useState(0);
+  const [hasPlayed, setHasPlayed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  useEffect(() => {
+    if (!showOnView || !videoRef.current) return;
+    
+    const video = videoRef.current;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !hasPlayed) {
+          video.play();
+          setHasPlayed(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    
+    observer.observe(video);
+    
+    return () => observer.disconnect();
+  }, [hasPlayed, showOnView]);
   
   const refreshAnimation = () => {
-    setAnimationKey(prev => prev + 1);
-  };
-  
-  const getAnimationProps = () => {
-    const baseProps = {
-      className: `cursor-pointer ${className}`,
-      initial: showOnView ? "hidden" : undefined,
-      whileInView: showOnView ? "visible" : undefined,
-      viewport: showOnView ? { once: true, margin: "-100px" } : undefined,
-    };
-
-    switch (animationType) {
-      case 'balance':
-        return {
-          ...baseProps,
-          whileHover: "hover",
-          variants: weegschaalBalance,
-        };
-      case 'float':
-        return {
-          ...baseProps,
-          animate: "animate",
-          variants: weegschaalFloat,
-        };
-      case 'pulse':
-        return {
-          ...baseProps,
-          animate: "pulse",
-          variants: weegschaalPulse,
-        };
-      case 'drop':
-        return {
-          ...baseProps,
-          variants: weegschaalDrop,
-        };
-      case 'dropDramatic':
-        return {
-          ...baseProps,
-          variants: weegschaalDropDramatic,
-        };
-      case 'slideFromLeft':
-        return {
-          ...baseProps,
-          variants: weegschaalSlideFromLeft,
-        };
-      case 'none':
-        return {
-          className: className,
-          initial: showOnView ? { opacity: 0, scale: 0.8 } : undefined,
-          whileInView: showOnView ? { opacity: 1, scale: 1 } : undefined,
-          viewport: showOnView ? { once: true, margin: "-100px" } : undefined,
-          transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }
-        };
-      default:
-        return baseProps;
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
+      setHasPlayed(true);
     }
   };
-
+  
   return (
     <div className="text-center">
-      <motion.div key={animationKey} {...getAnimationProps()}>
-        <Image
-          src="/weegschaal.png"
-          alt="JuisteBod.nl Logo - Weegschaal"
+      <div className={`${className}`} style={{ overflow: 'hidden', height: size * 0.95 }}>
+        <video
+          ref={videoRef}
           width={size}
           height={size}
           className="object-contain"
-          priority
-        />
-      </motion.div>
+          style={{ 
+            objectPosition: 'center top',
+            transform: 'translateY(-2%)'
+          }}
+          muted
+          playsInline
+          preload="metadata"
+          onEnded={() => {
+            // Video blijft op het laatste frame staan
+            if (videoRef.current) {
+              videoRef.current.pause();
+            }
+          }}
+        >
+          <source src="/animaties/Weegschaal 3.0.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
       
       {showRefreshButton && (
         <button
@@ -112,10 +87,4 @@ export default function AnimatedWeegschaal({
       )}
     </div>
   );
-}
-
-// Voorbeeld van gebruik:
-// <AnimatedWeegschaal animationType="balance" size={250} />
-// <AnimatedWeegschaal animationType="float" size={200} />
-// <AnimatedWeegschaal animationType="pulse" size={300} />
-// <AnimatedWeegschaal animationType="slideFromLeft" size={250} /> 
+} 

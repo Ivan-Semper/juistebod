@@ -14,37 +14,30 @@ import {
   fadeInLeft, 
   fadeInRight, 
   staggerContainer, 
-  scaleIn,
-  weegschaalBalance,
-  weegschaalFloat,
-  weegschaalPulse,
-  weegschaalDrop,
-  weegschaalDropDramatic
+  scaleIn
 } from "@/lib/hooks/useScrollAnimation";
 
-// Hero carousel images - voeg hier meer afbeeldingen toe
-const heroImages = [
-  {
-    src: "/landing_page_photos/hero-house.jpg",
-    alt: "Modern house exterior"
-  },
-  {
-    src: "/landing_page_photos/hero-house.jpg", // Duplicaat voor nu - vervang door nieuwe afbeeldingen
-    alt: "Beautiful villa"
-  },
-  {
-    src: "/landing_page_photos/hero-house.jpg", // Duplicaat voor nu - vervang door nieuwe afbeeldingen  
-    alt: "Luxury apartment"
-  },
-  {
-    src: "/landing_page_photos/hero-house.jpg", // Duplicaat voor nu - vervang door nieuwe afbeeldingen
-    alt: "Modern townhouse"
-  }
-];
+// Hero carousel images - automatisch gegenereerd uit folder
+const generateHeroImages = () => {
+  // Alleen de afbeeldingen die echt bestaan in de landing_page_photos folder
+  const imageFilenames = [
+    'artists-eyes-tHV0jeh_Yd4-unsplash.jpg',
+    'anya-chernik-LXHbMXfFrhw-unsplash.jpg'
+  ];
+
+  return imageFilenames.map((filename, index) => ({
+    src: `/landing_page_photos/${filename}`,
+    alt: `Beautiful property ${index + 1}`
+  }));
+};
+
+const heroImages = generateHeroImages();
 
 export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const router = useRouter();
 
   // Automatische carousel wisseling
@@ -53,10 +46,35 @@ export default function Home() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 8000); // Wissel elke 8 seconden
+    }, 15000); // Wissel elke 15 seconden
 
     return () => clearInterval(interval);
   }, []);
+
+  // Scroll-based navigation visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Toon navigatie als we helemaal bovenaan zijn (eerste 50px)
+      if (currentScrollY < 50) {
+        setIsNavVisible(true);
+      } 
+      // Verberg navigatie als we naar beneden scrollen
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsNavVisible(false);
+      }
+      // Toon navigatie als we naar boven scrollen
+      else if (currentScrollY < lastScrollY) {
+        setIsNavVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   const handlePropertyFound = (data: PropertyData) => {
     setPropertyData(data);
@@ -80,11 +98,22 @@ export default function Home() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FAF9F6' }}>
       {/* Header Navigation */}
-      <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm">
+      <motion.header 
+        className="fixed top-0 w-full z-50 bg-white/50 backdrop-blur-md shadow-sm"
+        initial={{ y: 0, opacity: 1 }}
+        animate={{ 
+          y: isNavVisible ? 0 : -100,
+          opacity: isNavVisible ? 1 : 0
+        }}
+        transition={{ 
+          duration: 0.3,
+          ease: [0.25, 0.46, 0.45, 0.94]
+        }}
+      >
         <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center">
+          <div className="flex items-center w-full">
+            {/* Logo helemaal links, nooit kleiner */}
+            <div className="flex-shrink-0">
               <a href="#" className="cursor-pointer">
                 <Image
                   src="/Juistebod logo voorkant.png"
@@ -96,32 +125,31 @@ export default function Home() {
                 />
               </a>
             </div>
-            
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
-                Hoe werkt het
-              </a>
-              <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
-                Waarom ons
-              </a>
-              <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors">
-                Reviews
-              </a>
-              <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
-                Contact
-              </a>
-            </nav>
-            
-            {/* Mobile menu button */}
-            <button className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+            {/* Navigation + mobile button helemaal rechts */}
+            <div className="flex flex-1 items-center justify-end">
+              <nav className="hidden md:flex items-center space-x-8">
+                <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Hoe werkt het
+                </a>
+                <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Waarom ons
+                </a>
+                <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Reviews
+                </a>
+                <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Contact
+                </a>
+              </nav>
+              <button className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 transition-colors ml-4">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -146,21 +174,7 @@ export default function Home() {
           <div className="absolute inset-0 hero-overlay"></div>
         </div>
 
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
-          {heroImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentImageIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentImageIndex
-                  ? 'bg-white scale-110'
-                  : 'bg-white/50 hover:bg-white/70'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+
 
         {/* Hero Content */}
         <div className="relative z-10 text-center text-white max-w-2xl px-6">
@@ -178,7 +192,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            Binnen 24 uur persoonlijk advies.
+            Persoonlijk Woningbod advies
           </motion.h1>
           
           {/* Property Form */}
@@ -307,36 +321,20 @@ export default function Home() {
       {/* Trust Section */}
       <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Weegschaal met drop animatie */}
-            <div className="flex justify-center md:justify-start">
-              <div className="w-64 h-64 flex items-center justify-center">
-                
-                {/* Slide from left animatie - de weegschaal schuift van links het scherm in */}
-                <AnimatedWeegschaal 
-                  animationType="slideFromLeft"
-                  size={300}
-                  showOnView={true}
-                  showRefreshButton={true}
-                />
-                
-                {/* Andere animatie opties (verander bovenstaande animationType): */}
-                {/* 
-                - "balance": Schommelt bij hover
-                - "float": Zweeft subtiel op en neer
-                - "pulse": Zachte pulsering
-                - "drop": Valt uit hand en schommelt (ACTIEF)
-                - "dropDramatic": Dramatische val met bounce
-                
-                Test ze allemaal op /animations-test
-                */}
-                
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-end">
+            {/* Weegschaal - neemt 5 kolommen links */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-start h-full self-end">
+              <AnimatedWeegschaal 
+                animationType="slideFromLeft"
+                size={500}
+                showOnView={true}
+                showRefreshButton={true}
+              />
             </div>
 
-            {/* Text Content - Animated from right */}
+            {/* Text Content - neemt 7 kolommen rechts */}
             <motion.div 
-              className="text-gray-800 space-y-6"
+              className="lg:col-span-7 text-gray-800 space-y-6 flex flex-col justify-end min-h-[400px]"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -760,40 +758,20 @@ export default function Home() {
           {/* Social Media */}
           <div className="text-center pt-8" style={{ borderTop: '1px solid rgba(124, 132, 113, 0.2)' }}>
             <h4 className="text-xl font-semibold mb-6 text-gray-800">
-              Social media
+              Volg ons op Instagram
             </h4>
-            <div className="flex justify-center space-x-6">
+            <div className="flex justify-center">
               <a 
-                href="#" 
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors"
+                href="https://www.instagram.com/juistebod?igsh=MXBxZXNpbDRmbXRx" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors hover:scale-105 transform"
                 style={{ backgroundColor: '#7C8471' }}
                 onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#6b7562'}
                 onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#7C8471'}
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                </svg>
-              </a>
-              <a 
-                href="#" 
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors"
-                style={{ backgroundColor: '#7C8471' }}
-                onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#6b7562'}
-                onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#7C8471'}
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
-                </svg>
-              </a>
-              <a 
-                href="#" 
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors"
-                style={{ backgroundColor: '#7C8471' }}
-                onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#6b7562'}
-                onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#7C8471'}
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.221.085.343-.09.377-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </a>
             </div>
