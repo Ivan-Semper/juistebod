@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import PropertyForm from "./components/PropertyForm";
 import GoogleMap from "./components/GoogleMap";
+import AnimatedWeegschaal from "./components/AnimatedWeegschaal";
 import { PropertyData } from "@/lib/types/PropertyTypes";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -13,12 +14,49 @@ import {
   fadeInLeft, 
   fadeInRight, 
   staggerContainer, 
-  scaleIn 
+  scaleIn,
+  weegschaalBalance,
+  weegschaalFloat,
+  weegschaalPulse,
+  weegschaalDrop,
+  weegschaalDropDramatic
 } from "@/lib/hooks/useScrollAnimation";
+
+// Hero carousel images - voeg hier meer afbeeldingen toe
+const heroImages = [
+  {
+    src: "/landing_page_photos/hero-house.jpg",
+    alt: "Modern house exterior"
+  },
+  {
+    src: "/landing_page_photos/hero-house.jpg", // Duplicaat voor nu - vervang door nieuwe afbeeldingen
+    alt: "Beautiful villa"
+  },
+  {
+    src: "/landing_page_photos/hero-house.jpg", // Duplicaat voor nu - vervang door nieuwe afbeeldingen  
+    alt: "Luxury apartment"
+  },
+  {
+    src: "/landing_page_photos/hero-house.jpg", // Duplicaat voor nu - vervang door nieuwe afbeeldingen
+    alt: "Modern townhouse"
+  }
+];
 
 export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
+
+  // Automatische carousel wisseling
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 8000); // Wissel elke 8 seconden
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePropertyFound = (data: PropertyData) => {
     setPropertyData(data);
@@ -86,38 +124,46 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
-        {/* Background Image */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image Carousel */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/hero-house.jpg"
-            alt="Modern house exterior"
-            fill
-            className="object-cover"
-            priority
-          />
+          {heroImages.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </div>
+          ))}
           <div className="absolute inset-0 hero-overlay"></div>
+        </div>
+
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentImageIndex
+                  ? 'bg-white scale-110'
+                  : 'bg-white/50 hover:bg-white/70'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 text-center text-white max-w-2xl px-6">
-          {/* Hero Logo */}
-          <motion.div 
-            className="mb-8"
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <Image
-              src="/Juiste bod logo balk.png"
-              alt="JuisteBod.nl Logo"
-              width={300}
-              height={100}
-              className="object-contain mx-auto filter brightness-0 invert"
-              priority
-            />
-          </motion.div>
-          
           <motion.p 
             className="text-lg md:text-xl font-light mb-4 opacity-90"
             initial={{ opacity: 0, y: -30 }}
@@ -262,25 +308,31 @@ export default function Home() {
       <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Logo - Animated from left */}
-            <motion.div 
-              className="flex justify-center md:justify-start"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeInLeft}
-            >
+            {/* Weegschaal met drop animatie */}
+            <div className="flex justify-center md:justify-start">
               <div className="w-64 h-64 flex items-center justify-center">
-                <Image
-                  src="/weegschaal.png"
-                  alt="JuisteBod.nl Logo - Weegschaal"
-                  width={300}
-                  height={300}
-                  className="object-contain"
-                  priority
+                
+                {/* Slide from left animatie - de weegschaal schuift van links het scherm in */}
+                <AnimatedWeegschaal 
+                  animationType="slideFromLeft"
+                  size={300}
+                  showOnView={true}
+                  showRefreshButton={true}
                 />
+                
+                {/* Andere animatie opties (verander bovenstaande animationType): */}
+                {/* 
+                - "balance": Schommelt bij hover
+                - "float": Zweeft subtiel op en neer
+                - "pulse": Zachte pulsering
+                - "drop": Valt uit hand en schommelt (ACTIEF)
+                - "dropDramatic": Dramatische val met bounce
+                
+                Test ze allemaal op /animations-test
+                */}
+                
               </div>
-            </motion.div>
+            </div>
 
             {/* Text Content - Animated from right */}
             <motion.div 
