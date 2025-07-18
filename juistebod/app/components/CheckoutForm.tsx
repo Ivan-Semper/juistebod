@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, Fragment, useRef } from 'react';
 import { PropertyData } from '@/lib/types/PropertyTypes';
 
 interface CheckoutFormProps {
@@ -12,13 +12,13 @@ interface FormData {
   firstName: string;
   lastName: string;
   email: string;
+  confirmEmail: string;
   phone: string;
   gender: string;
   age: string;
   currentSituation: string;
   budgetRange: string;
   firstTimeBuyer: string;
-  urgency: string;
   additionalInfo: string;
 }
 
@@ -27,18 +27,22 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
     firstName: '',
     lastName: '',
     email: '',
+    confirmEmail: '',
     phone: '',
     gender: '',
     age: '',
     currentSituation: '',
     budgetRange: '',
     firstTimeBuyer: '',
-    urgency: '',
     additionalInfo: ''
   });
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsError, setTermsError] = useState('');
+  const termsRef = useRef<HTMLDivElement>(null);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<FormData> = {};
@@ -57,8 +61,21 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       newErrors.email = 'Voer een geldig email adres in';
     }
 
+    if (!formData.confirmEmail.trim()) {
+      newErrors.confirmEmail = 'Bevestig je emailadres';
+    } else if (formData.email !== formData.confirmEmail) {
+      newErrors.confirmEmail = 'Emailadressen komen niet overeen';
+    }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Algemene voorwaarden verplicht
+    if (!termsAccepted) {
+      setTermsError('Je moet akkoord gaan met de algemene voorwaarden');
+      return false;
+    } else {
+      setTermsError('');
+    }
+    return Object.keys(newErrors).length === 0 && termsAccepted;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -166,6 +183,24 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
           <p className="mt-1 text-sm text-red-600">{errors.email}</p>
         )}
       </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-900 mb-2">
+          Bevestig emailadres *
+        </label>
+        <input
+          type="email"
+          name="confirmEmail"
+          value={formData.confirmEmail}
+          onChange={handleChange}
+          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
+            errors.confirmEmail ? 'border-red-500' : 'border-gray-400'
+          }`}
+          placeholder="Herhaal je emailadres"
+        />
+        {errors.confirmEmail && (
+          <p className="mt-1 text-sm text-red-600">{errors.confirmEmail}</p>
+        )}
+      </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -207,8 +242,6 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
               <option value="">Selecteer...</option>
               <option value="man">Man</option>
               <option value="vrouw">Vrouw</option>
-              <option value="anders">Anders</option>
-              <option value="geen_antwoord">Wil ik niet zeggen</option>
             </select>
           </div>
 
@@ -289,23 +322,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Hoe urgent is de aankoop?
-            </label>
-            <select
-              name="urgency"
-              value={formData.urgency}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            >
-              <option value="">Selecteer...</option>
-              <option value="zeer_urgent">Zeer urgent (binnen 1 maand)</option>
-              <option value="urgent">Urgent (binnen 3 maanden)</option>
-              <option value="normaal">Normaal (binnen 6 maanden)</option>
-              <option value="niet_urgent">Niet urgent (langer dan 6 maanden)</option>
-            </select>
-          </div>
+          {/* Removed urgency field */}
         </div>
       </div>
 
@@ -323,6 +340,63 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
           placeholder="Heb je specifieke wensen of bijzonderheden die we moeten weten voor het bodadvies?"
         />
       </div>
+
+      {/* Algemene voorwaarden checkbox en link */}
+      <div className="flex items-center mt-4">
+        <input
+          id="terms"
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={e => setTermsAccepted(e.target.checked)}
+          className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label htmlFor="terms" className="ml-3 text-sm text-gray-800 select-none">
+          Ik ga akkoord met de{' '}
+          <button
+            type="button"
+            className="text-blue-600 underline hover:text-blue-800 focus:outline-none"
+            onClick={() => setShowTermsModal(true)}
+          >
+            algemene voorwaarden
+          </button>
+        </label>
+      </div>
+      {termsError && <p className="text-sm text-red-600 mt-1">{termsError}</p>}
+
+      {/* Modal voor algemene voorwaarden */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70">
+          <div ref={termsRef} className="bg-white rounded-lg shadow-lg max-w-lg w-full p-8 relative animate-fade-in">
+            <h2 className="text-2xl font-extrabold uppercase mb-4 text-center tracking-wide" style={{ color: '#1F3C88', textDecoration: 'underline', textUnderlineOffset: '6px' }}>Algemene Voorwaarden</h2>
+            <div className="text-gray-700 text-sm space-y-3 max-h-96 overflow-y-auto">
+              <p>1. JuisteBod.nl levert eenmalig een persoonlijk bodadvies op basis van de door jou aangeleverde gegevens.</p>
+              <p>2. Het advies is informatief en niet bindend. Je blijft zelf verantwoordelijk voor je uiteindelijke bod en aankoopbeslissing.</p>
+              <p>3. JuisteBod.nl is niet aansprakelijk voor schade of verlies voortvloeiend uit het opvolgen van het advies.</p>
+              <p>4. Je gegevens worden vertrouwelijk behandeld en alleen gebruikt voor het opstellen van het bodadvies.</p>
+              <p>5. Betaling is eenmalig en geeft recht op één adviesrapport. Restitutie is alleen mogelijk binnen 14 dagen en vóór levering van het rapport.</p>
+              <p>6. Door akkoord te gaan verklaar je deze voorwaarden te hebben gelezen en begrepen.</p>
+              <p>7. Je ontvangt het rapport binnen maximaal 24 uur op werkdagen (ma-vr). In het weekend kan de levering langer duren.</p>
+            </div>
+            <button
+              type="button"
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl font-bold focus:outline-none"
+              onClick={() => setShowTermsModal(false)}
+              aria-label="Sluit"
+            >
+              ×
+            </button>
+            <div className="mt-6 text-right">
+              <button
+                type="button"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none"
+                onClick={() => setShowTermsModal(false)}
+              >
+                Sluiten
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pricing Information */}
       <div className="bg-gray-50/20 backdrop-blur-sm p-6 rounded-lg">
@@ -363,15 +437,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       </button>
 
       <p className="text-xs text-gray-700 text-center mt-4">
-        Door op 'Betaal €49 en ontvang advies' te klikken, ga je akkoord met onze{' '}
-        <a href="/voorwaarden" className="text-blue-600 hover:underline">
-          algemene voorwaarden
-        </a>{' '}
-        en{' '}
-        <a href="/privacy" className="text-blue-600 hover:underline">
-          privacybeleid
-        </a>
-        .
+        Door op 'Betaal €49 en ontvang advies' te klikken, ga je akkoord met onze <span className="font-semibold">algemene voorwaarden</span> (max. 24 uur op werkdagen, niet in het weekend) en <a href="/privacy" className="text-blue-600 hover:underline">privacybeleid</a>.
       </p>
     </form>
   );
