@@ -5,12 +5,12 @@ import { Loader } from '@googlemaps/js-api-loader';
 
 interface GoogleMapProps {
   address: string;
-  propertyTitle: string;
+  propertyTitle?: string;
   onMapLoaded?: () => void;
   fullScreen?: boolean;
 }
 
-export default function GoogleMap({ address, propertyTitle, onMapLoaded, fullScreen = false }: GoogleMapProps) {
+export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoaded, fullScreen = false }: GoogleMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
