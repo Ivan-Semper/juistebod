@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
           urgency,
           additionalInfo
         }
-      }
+      },
+      amount: 49.95
     })
 
     logger.info('Order created successfully', { 

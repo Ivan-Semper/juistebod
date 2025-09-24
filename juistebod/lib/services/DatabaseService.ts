@@ -11,6 +11,7 @@ export class DatabaseService {
     gender?: string
     propertyUrl: string
     propertyData: PropertyData
+    amount?: number
   }): Promise<Order> {
     try {
       const orderData: OrderInsert = {
@@ -22,7 +23,7 @@ export class DatabaseService {
         property_data: data.propertyData,
         payment_status: 'pending',
         order_status: 'new',
-        amount_paid: 39.95
+        amount_paid: data.amount || 49.95
       }
 
       const { data: order, error } = await supabaseAdmin

@@ -5,9 +5,12 @@ import { useRouter } from "next/navigation";
 import { PropertyData } from "@/lib/types/PropertyTypes";
 import GoogleMap from "../components/GoogleMap";
 import CheckoutForm from "../components/CheckoutForm";
+import PaymentButton from "../components/PaymentButton";
 
 export default function CheckoutPage() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,14 +57,12 @@ export default function CheckoutPage() {
       const result = await response.json();
 
       if (result.success) {
-        // Store order ID for later use
-        sessionStorage.setItem('orderId', result.data.orderId);
+        // Store order ID for payment
+        setOrderId(result.data.orderId);
+        setShowPayment(true);
         
-        // Success message
-        alert(`Bedankt ${formData.firstName}! Je aanvraag is ontvangen. We nemen binnen 24 uur contact met je op via ${formData.email}.`);
-        
-        // Redirect to success page or home
-        router.push('/');
+        // Show success message
+        alert(`Bedankt ${formData.firstName}! Je order is aangemaakt. Je kunt nu betalen.`);
       } else {
         throw new Error(result.error || 'Failed to create order');
       }
@@ -177,10 +178,42 @@ export default function CheckoutPage() {
                 Jouw Gegevens
               </h2>
               
-              <CheckoutForm 
-                propertyData={propertyData}
-                onSubmit={handleFormSubmit}
-              />
+              {!showPayment ? (
+                <CheckoutForm 
+                  propertyData={propertyData}
+                  onSubmit={handleFormSubmit}
+                />
+              ) : (
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                      Betaling
+                    </h3>
+                    <p className="text-gray-600">
+                      Klik op de knop hieronder om te betalen met Mollie
+                    </p>
+                  </div>
+                  
+                  <PaymentButton
+                    orderId={orderId!}
+                    amount={29.95}
+                    description="Persoonlijk Bodadvies - JuisteBod"
+                    onPaymentSuccess={() => {
+                      alert('Betaling succesvol! Je ontvangt binnen 24 uur je rapport.');
+                      router.push('/');
+                    }}
+                  />
+                  
+                  <div className="text-center">
+                    <button
+                      onClick={() => setShowPayment(false)}
+                      className="text-gray-600 hover:text-gray-800 text-sm"
+                    >
+                      ← Terug naar formulier
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
