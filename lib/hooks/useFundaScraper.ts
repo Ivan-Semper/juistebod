@@ -54,8 +54,8 @@ export function useFundaScraper(): UseFundaScraperReturn {
       const normalizedUrl = normalizeFundaUrl(url);
       const startTime = Date.now();
       
-      // Try the simple scraping API first (better against bot detection)
-      let response = await fetch('/api/scrape-funda-simple', {
+      // Try the basic scraping API first (most reliable)
+      let response = await fetch('/api/scrape-funda-basic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,22 @@ export function useFundaScraper(): UseFundaScraperReturn {
         body: JSON.stringify({ url: normalizedUrl }),
       });
 
-      // If simple API fails, try the advanced API
+      console.log('🔍 Basic API response status:', response.status);
+
+      // If basic API fails, try the simple API
+      if (!response.ok && response.status !== 429) {
+        console.log('Basic API failed, trying simple API...');
+        response = await fetch('/api/scrape-funda-simple', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: normalizedUrl }),
+        });
+        console.log('🔍 Simple API response status:', response.status);
+      }
+
+      // If simple API also fails, try the advanced API
       if (!response.ok && response.status !== 429) {
         console.log('Simple API failed, trying advanced API...');
         response = await fetch('/api/scrape-funda', {
@@ -73,6 +88,7 @@ export function useFundaScraper(): UseFundaScraperReturn {
           },
           body: JSON.stringify({ url: normalizedUrl }),
         });
+        console.log('🔍 Advanced API response status:', response.status);
       }
 
       const result: EnhancedScrapingResponse = await response.json();
