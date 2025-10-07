@@ -54,13 +54,26 @@ export function useFundaScraper(): UseFundaScraperReturn {
       const normalizedUrl = normalizeFundaUrl(url);
       const startTime = Date.now();
       
-      const response = await fetch('/api/scrape-funda', {
+      // Try the simple scraping API first (better against bot detection)
+      let response = await fetch('/api/scrape-funda-simple', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ url: normalizedUrl }),
       });
+
+      // If simple API fails, try the advanced API
+      if (!response.ok && response.status !== 429) {
+        console.log('Simple API failed, trying advanced API...');
+        response = await fetch('/api/scrape-funda', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: normalizedUrl }),
+        });
+      }
 
       const result: EnhancedScrapingResponse = await response.json();
 
