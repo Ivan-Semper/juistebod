@@ -4,10 +4,8 @@ const nextConfig: NextConfig = {
   // Ensure proper deployment
   output: 'standalone',
   
-  // Disable static optimization for dynamic routes
-  experimental: {
-    serverComponentsExternalPackages: ['cheerio']
-  },
+  // External packages for server components
+  serverExternalPackages: ['cheerio'],
   
   // Environment variables
   env: {
