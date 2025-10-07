@@ -26,8 +26,8 @@ export const AppConfig = {
   // Rate Limiting
   rateLimit: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    maxRequests: 50, // Reduced from 100 to be more conservative
-    skipSuccessfulRequests: false,
+    maxRequests: 100, // Increased back to 100 for better user experience
+    skipSuccessfulRequests: true, // Don't count successful requests
     skipFailedRequests: false,
   },
 

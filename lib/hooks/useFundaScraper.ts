@@ -88,7 +88,7 @@ export function useFundaScraper(): UseFundaScraperReturn {
       if (!response.ok) {
         // Handle different types of errors
         if (response.status === 429) {
-          throw new Error('Te veel verzoeken. Probeer het later opnieuw.');
+          throw new Error('Te veel verzoeken. Wacht 1-2 minuten en probeer opnieuw.');
         } else if (response.status === 400) {
           // Validation errors
           if (result.details && result.details.length > 0) {
