@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd juistebod && npm run build",
+  "outputDirectory": "juistebod/.next",
+  "installCommand": "cd juistebod && npm install"
+}
