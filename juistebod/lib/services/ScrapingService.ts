@@ -780,7 +780,7 @@ export class ScrapingService {
       $('*').each((_, element) => {
         const text = $(element).text().toLowerCase();
         if (text.includes(keyword.toLowerCase()) && text.length < 200) {
-          const tagName = element.tagName;
+          const tagName = (element as any).tagName;
           const className = $(element).attr('class') || '';
           const id = $(element).attr('id') || '';
           const selector = `${tagName}${className ? '.' + className.split(' ')[0] : ''}${id ? '#' + id : ''}`;

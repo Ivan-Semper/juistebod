@@ -1,10 +1,10 @@
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 
-export function useScrollAnimation(threshold = 0.1) {
+export function useScrollAnimation(amount = 0.1) {
   const ref = useRef(null)
   const isInView = useInView(ref, { 
-    threshold,
+    amount,
     once: true, // Only animate once
     margin: "-100px 0px" // Start animation 100px before element comes into view
   })
@@ -24,7 +24,7 @@ export const fadeInUp = {
     y: 0,
     transition: { 
       duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94] // Custom easing
+      ease: "easeOut"
     }
   }
 }
@@ -40,7 +40,7 @@ export const fadeInLeft = {
     x: 0,
     transition: { 
       duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   }
 }
@@ -56,7 +56,7 @@ export const fadeInRight = {
     x: 0,
     transition: { 
       duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   }
 }
@@ -70,7 +70,7 @@ export const fadeIn = {
     opacity: 1,
     transition: { 
       duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   }
 }
@@ -97,7 +97,7 @@ export const scaleIn = {
     scale: 1,
     transition: { 
       duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   }
 }
@@ -115,7 +115,7 @@ export const weegschaalBalance = {
     rotate: 0,
     transition: { 
       duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   },
   hover: {
@@ -148,7 +148,7 @@ export const weegschaalFloat = {
     scale: 1,
     transition: { 
       duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   },
   animate: {
@@ -181,7 +181,7 @@ export const weegschaalPulse = {
     scale: 1,
     transition: { 
       duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      ease: "easeOut"
     }
   },
   pulse: {
@@ -211,8 +211,8 @@ export const weegschaalDrop = {
     rotate: [0, -4, 4, -3, 3, -2, 2, -1, 1, 0], // Langere schommeling
     transition: { 
       opacity: { duration: 0.3 },
-      y: { duration: 1.8, ease: [0.25, 0.46, 0.45, 0.94], type: "spring", stiffness: 80, damping: 10 },
-      scale: { duration: 1.8, ease: [0.25, 0.46, 0.45, 0.94], type: "spring", stiffness: 80, damping: 10 },
+      y: { duration: 1.8, ease: "easeOut", type: "spring", stiffness: 80, damping: 10 },
+      scale: { duration: 1.8, ease: "easeOut", type: "spring", stiffness: 80, damping: 10 },
       rotate: {
         duration: 3,
         ease: "easeInOut",
@@ -237,7 +237,7 @@ export const weegschaalDropDramatic = {
     rotate: [0, -8, 8, -6, 6, -4, 4, -2, 2, -1, 1, 0], // Nog langere schommeling
     transition: { 
       opacity: { duration: 0.3 },
-      scale: { duration: 2.2, ease: [0.17, 0.67, 0.83, 0.67], type: "spring", stiffness: 50, damping: 6 },
+      scale: { duration: 2.2, ease: "easeOut", type: "spring", stiffness: 50, damping: 6 },
       y: {
         duration: 4,
         ease: "easeInOut",
@@ -268,7 +268,7 @@ export const weegschaalSlideFromLeft = {
     transition: { 
       x: { 
         duration: 1.2, // Snappiger animatie
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: "easeOut",
         type: "spring",
         stiffness: 60, // Meer stiffness voor meer impact
         damping: 15

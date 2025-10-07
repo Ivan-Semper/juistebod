@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       paymentId: payment.id,
-      checkoutUrl: payment._links.checkout.href
+      checkoutUrl: payment._links.checkout?.href || ''
     });
 
   } catch (error) {

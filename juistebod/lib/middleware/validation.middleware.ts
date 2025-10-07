@@ -103,7 +103,7 @@ export class RequestValidator {
       if (body.url && typeof body.url === 'string') {
         try {
           const urlObj = new URL(body.url);
-          if (!AppConfig.scraping.allowedDomains.includes(urlObj.hostname)) {
+          if (!AppConfig.scraping.allowedDomains.includes(urlObj.hostname as any)) {
             errors.push({
               field: 'url',
               message: `Domain not allowed. Allowed domains: ${AppConfig.scraping.allowedDomains.join(', ')}`,

@@ -8,14 +8,15 @@ import AnimatedWeegschaal from "./components/AnimatedWeegschaal";
 import { PropertyData } from "@/lib/types/PropertyTypes";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { 
-  useScrollAnimation, 
-  fadeInUp, 
-  fadeInLeft, 
-  fadeInRight, 
-  staggerContainer, 
-  scaleIn
-} from "@/lib/hooks/useScrollAnimation";
+// Temporarily disabled animations for build fix
+// import { 
+//   useScrollAnimation, 
+//   fadeInUp, 
+//   fadeInLeft, 
+//   fadeInRight, 
+//   staggerContainer, 
+//   scaleIn
+// } from "@/lib/hooks/useScrollAnimation";
 
 // Hero carousel images - automatisch gegenereerd uit folder
 const generateHeroImages = () => {
@@ -335,10 +336,10 @@ export default function Home() {
             {/* Text Content - neemt 7 kolommen rechts */}
             <motion.div 
               className="lg:col-span-7 text-gray-800 space-y-6 flex flex-col justify-end min-h-[400px]"
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              variants={fadeInRight}
+              transition={{ duration: 0.8 }}
             >
               <p className="text-lg leading-relaxed">
                 Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning zonder dat daar hoge makelaarskosten bij komen kijken.
@@ -356,23 +357,25 @@ export default function Home() {
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2 
             className="text-4xl md:text-5xl font-bold mb-20 text-gray-800"
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
+            transition={{ duration: 0.6 }}
           >
             Zo werkt het
           </motion.h2>
           
           <motion.div 
             className="grid md:grid-cols-3 gap-12 mb-16"
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
+            transition={{ duration: 0.6, staggerChildren: 0.2 }}
           >
             {/* Stap 1 */}
-            <motion.div className="relative text-center" variants={fadeInUp}>
+            <motion.div className="relative text-center" initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}>
               <div 
                 className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-bold"
                 style={{ backgroundColor: '#1F3C88' }}
@@ -397,7 +400,9 @@ export default function Home() {
             </motion.div>
             
             {/* Stap 2 */}
-            <motion.div className="relative text-center" variants={fadeInUp}>
+            <motion.div className="relative text-center" initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}>
               <div 
                 className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-bold"
                 style={{ backgroundColor: '#1F3C88' }}
@@ -422,7 +427,9 @@ export default function Home() {
             </motion.div>
             
             {/* Stap 3 */}
-            <motion.div className="text-center" variants={fadeInUp}>
+            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}>
               <div 
                 className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-2xl font-bold"
                 style={{ backgroundColor: '#7C8471' }}
@@ -442,10 +449,10 @@ export default function Home() {
           {/* Extra info */}
           <motion.div 
             className="bg-white rounded-xl p-8 shadow-lg max-w-4xl mx-auto"
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
-            variants={scaleIn}
+            transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl font-bold mb-6 text-gray-800">Wat krijg je precies?</h3>
             <div className="grid md:grid-cols-2 gap-8 text-left">
@@ -481,10 +488,10 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <motion.div 
             className="text-center"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
+            initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-16 text-gray-800">
               Waarom JuisteBod.nl?
@@ -493,10 +500,10 @@ export default function Home() {
           
           <motion.div 
             className="prose prose-lg max-w-none text-gray-700 space-y-6"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
+            initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}
           >
             <p className="text-lg leading-relaxed">
               De woningmarkt is de afgelopen jaren volledig op z'n kop gezet. 
@@ -513,10 +520,10 @@ export default function Home() {
             
             <motion.div 
               className="text-center my-12"
-              initial="hidden"
-              whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
-              variants={scaleIn}
+              initial={{ opacity: 0, scale: 0.8 }}
+whileInView={{ opacity: 1, scale: 1 }}
+transition={{ duration: 0.6 }}
             >
               <p className="text-2xl md:text-3xl font-semibold text-gray-800 italic">
                 "Wat moet ik bieden op dit huis?"
@@ -531,10 +538,10 @@ export default function Home() {
             
             <motion.div 
               className="bg-white rounded-xl p-8 shadow-lg my-12"
-              initial="hidden"
-              whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
-              variants={scaleIn}
+              initial={{ opacity: 0, scale: 0.8 }}
+whileInView={{ opacity: 1, scale: 1 }}
+transition={{ duration: 0.6 }}
             >
               <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">
                 En het mooiste?
@@ -560,10 +567,10 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <motion.div 
             className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
+            initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-800">
               Persoonlijk biedadvies
@@ -577,10 +584,10 @@ export default function Home() {
 
           <motion.div 
             className="prose prose-lg max-w-none text-gray-700 space-y-6 mb-12"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
+            initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}
           >
             <p className="text-lg leading-relaxed text-center">
               Ontvang binnen 24 uur een onderbouwd advies dat je helpt slim te bieden zonder 
@@ -591,10 +598,10 @@ export default function Home() {
 
           <motion.div 
             className="bg-white rounded-xl p-8 shadow-lg"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={scaleIn}
+            initial={{ opacity: 0, scale: 0.8 }}
+whileInView={{ opacity: 1, scale: 1 }}
+transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl font-bold mb-8 text-center text-gray-800">
               Wat je krijgt met persoonlijk advies van JuisteBod.nl:
@@ -670,23 +677,25 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <motion.h2 
             className="text-4xl md:text-5xl font-bold mb-20 text-center text-gray-800"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
+            initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}
           >
             Tevreden klanten
           </motion.h2>
           
           <motion.div 
             className="grid md:grid-cols-3 gap-12"
-            initial="hidden"
-            whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
+            initial={{ opacity: 0 }}
+whileInView={{ opacity: 1 }}
+transition={{ duration: 0.6, staggerChildren: 0.2 }}
           >
             {/* Testimonial 1 */}
-            <motion.div className="text-center" variants={fadeInUp}>
+            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}>
               <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>"</div>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                 Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.
@@ -697,7 +706,9 @@ export default function Home() {
             </motion.div>
 
             {/* Testimonial 2 */}
-            <motion.div className="text-center" variants={fadeInUp}>
+            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}>
               <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>"</div>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                 Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.
@@ -708,7 +719,9 @@ export default function Home() {
             </motion.div>
 
             {/* Testimonial 3 */}
-            <motion.div className="text-center" variants={fadeInUp}>
+            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.6 }}>
               <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>"</div>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                 Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.

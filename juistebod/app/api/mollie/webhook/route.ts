@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         amount_paid: payment.amount.value,
         updated_at: new Date().toISOString()
       })
-      .eq('id', payment.metadata.orderId);
+      .eq('id', (payment.metadata as any)?.orderId);
 
     if (error) {
       console.error('Database update error:', error);
