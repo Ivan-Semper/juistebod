@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-const mollieClient = createMollieClient({ apiKey: process.env.MOLLIE_API_KEY! });
-const supabase = createSupabaseClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const mollieApiKey = process.env.MOLLIE_API_KEY || 'placeholder-mollie-key';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key';
+
+const mollieClient = createMollieClient({ apiKey: mollieApiKey });
+const supabase = createSupabaseClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(request: NextRequest) {
   try {

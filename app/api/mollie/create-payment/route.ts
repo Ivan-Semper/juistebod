@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 
-const mollieClient = createMollieClient({ apiKey: process.env.MOLLIE_API_KEY! });
+const mollieApiKey = process.env.MOLLIE_API_KEY || 'placeholder-mollie-key';
+const mollieClient = createMollieClient({ apiKey: mollieApiKey });
 
 export async function POST(request: NextRequest) {
   try {
