@@ -132,6 +132,8 @@ export function useFundaScraper(): UseFundaScraperReturn {
         error: errorMessage,
         errorCode: errorCode,
         metadata: metadata,
+        fullError: err,
+        errorStack: err instanceof Error ? err.stack : 'No stack trace'
       });
       
       return null;
