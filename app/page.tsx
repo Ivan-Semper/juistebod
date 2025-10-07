@@ -228,12 +228,12 @@ export default function Home() {
                     {propertyData.title}
                   </h3>
                   <div className="space-y-3">
-                    <p className="text-gray-800"><strong>Adres:</strong> {propertyData.address}</p>
-                    <p className="text-gray-800"><strong>Prijs:</strong> {propertyData.price}</p>
-                    <p className="text-gray-800"><strong>Type:</strong> {propertyData.propertyType}</p>
-                    <p className="text-gray-800"><strong>Oppervlakte:</strong> {propertyData.surface}</p>
-                    <p className="text-gray-800"><strong>Kamers:</strong> {propertyData.rooms}</p>
-                    <p className="text-gray-800"><strong>Bouwjaar:</strong> {propertyData.yearBuilt}</p>
+                    <p className="text-gray-800"><strong>Adres:</strong> {propertyData.address || 'Niet beschikbaar'}</p>
+                    <p className="text-gray-800"><strong>Prijs:</strong> {propertyData.price || 'Niet beschikbaar'}</p>
+                    <p className="text-gray-800"><strong>Type:</strong> {propertyData.propertyType || 'Niet beschikbaar'}</p>
+                    <p className="text-gray-800"><strong>Oppervlakte:</strong> {propertyData.surface || 'Niet beschikbaar'}</p>
+                    <p className="text-gray-800"><strong>Kamers:</strong> {propertyData.rooms || 'Niet beschikbaar'}</p>
+                    <p className="text-gray-800"><strong>Bouwjaar:</strong> {propertyData.yearBuilt || 'Niet beschikbaar'}</p>
                   </div>
                 </div>
 
@@ -248,7 +248,7 @@ export default function Home() {
               </div>
 
               {/* Property Image (if available) */}
-              {propertyData.images.length > 0 && (
+              {propertyData.images && propertyData.images.length > 0 && (
                 <div className="mt-8">
                   <h4 className="text-lg font-semibold mb-4 text-gray-800">Foto's</h4>
                   <img 

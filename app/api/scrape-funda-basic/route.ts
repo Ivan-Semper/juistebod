@@ -60,7 +60,14 @@ export async function POST(request: NextRequest) {
         url: url,
         scrapedAt: new Date().toISOString(),
         contentLength: html.length,
-        hasPropertyData: html.includes('prijs') || html.includes('oppervlakte') || html.includes('kamers')
+        hasPropertyData: html.includes('prijs') || html.includes('oppervlakte') || html.includes('kamers'),
+        // Add required fields with safe defaults
+        images: [], // Empty array instead of undefined
+        description: '', // Empty string instead of undefined
+        propertyType: 'Onbekend',
+        surface: 'Onbekend',
+        rooms: 'Onbekend',
+        yearBuilt: 'Onbekend'
       };
 
       console.log('✅ Basic scraping successful:', propertyData);
