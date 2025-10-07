@@ -74,11 +74,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     // Perform the scraping
-    const result = await scrapingService.scrapeProperty(body.url, {
-      requestId,
-      timeout: AppConfig.scraping.timeout,
-      retryAttempts: AppConfig.scraping.retryAttempts,
-    });
+    let result;
+    try {
+      result = await scrapingService.scrapeProperty(body.url, {
+        requestId,
+        timeout: AppConfig.scraping.timeout,
+        retryAttempts: AppConfig.scraping.retryAttempts,
+      });
+    } catch (scrapingError) {
+      logger.error('Scraping service error', { 
+        url: body.url, 
+        error: scrapingError instanceof Error ? scrapingError.message : 'Unknown error',
+        clientIP, 
+        requestId 
+      });
+      
+      return NextResponse.json({
+        success: false,
+        error: 'Scraping service failed',
+        message: scrapingError instanceof Error ? scrapingError.message : 'Unknown scraping error',
+        errorCode: 'SCRAPING_SERVICE_ERROR',
+        metadata: {
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+      }, { status: 500 });
+    }
 
     // End performance monitoring
     const duration = PerformanceMonitor.endRequest(requestId);
