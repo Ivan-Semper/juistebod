@@ -5,6 +5,7 @@ import Image from "next/image";
 import PropertyForm from "./components/PropertyForm";
 import GoogleMap from "./components/GoogleMap";
 import AnimatedWeegschaal from "./components/AnimatedWeegschaal";
+import ManualPropertyForm from "./components/ManualPropertyForm";
 import { PropertyData } from "@/lib/types/PropertyTypes";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -39,6 +40,7 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showManualForm, setShowManualForm] = useState(false);
   const router = useRouter();
 
   // Automatische carousel wisseling
@@ -202,7 +204,17 @@ export default function Home() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <PropertyForm onPropertyFound={handlePropertyFound} />
+            {!showManualForm ? (
+          <PropertyForm 
+            onPropertyFound={handlePropertyFound} 
+            onShowManualForm={() => setShowManualForm(true)}
+          />
+        ) : (
+          <ManualPropertyForm 
+            onPropertyFound={handlePropertyFound}
+            onBack={() => setShowManualForm(false)}
+          />
+        )}
           </motion.div>
         </div>
       </section>

@@ -7,9 +7,10 @@ import { motion } from 'framer-motion';
 
 interface PropertyFormProps {
   onPropertyFound: (propertyData: any) => void;
+  onShowManualForm?: () => void;
 }
 
-export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
+export default function PropertyForm({ onPropertyFound, onShowManualForm }: PropertyFormProps) {
   const [url, setUrl] = useState('');
   const [validationError, setValidationError] = useState('');
   const { scrapeProperty, isLoading, error } = useFundaScraper();
@@ -113,6 +114,23 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
             Woning gegevens ophalen...
           </div>
         </motion.div>
+      )}
+
+      {/* Manual Entry Option */}
+      {onShowManualForm && (
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 text-sm mb-3">
+            Automatisch scrapen werkt niet? 
+          </p>
+          <motion.button
+            onClick={onShowManualForm}
+            className="text-blue-600 hover:text-blue-800 underline text-sm"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Voer woninggegevens handmatig in
+          </motion.button>
+        </div>
       )}
     </form>
   );
