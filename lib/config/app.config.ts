@@ -3,19 +3,12 @@
  * Centralized configuration management for the JuisteBod backend
  */
 
-// Detect if running on Vercel
-const isVercel = !!process.env.VERCEL;
-// Vercel timeout limits: 10s (Hobby), 60s (Pro)
-// Use 8s for Hobby plan to be safe, or 55s for Pro
-const vercelTimeout = process.env.VERCEL_ENV === 'production' ? 55000 : 8000;
-const defaultTimeout = 45000; // 45 seconds for localhost
-
 export const AppConfig = {
   // Scraping Configuration
   scraping: {
-    timeout: isVercel ? vercelTimeout : defaultTimeout, // Adjust for Vercel limits
-    retryAttempts: isVercel ? 2 : 5, // Fewer retries on Vercel due to timeout limits
-    retryDelay: isVercel ? 1000 : 3000, // Faster retries on Vercel
+    timeout: 45000, // 45 seconds
+    retryAttempts: 5,
+    retryDelay: 3000, // 3 seconds between retries
     userAgents: [
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',

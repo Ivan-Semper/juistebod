@@ -68,36 +68,6 @@ async function testEndpoint(name, endpoint, url) {
   }
 }
 
-async function testClientSideEndpoint(name, endpoint, url) {
-  log(`\n🧪 Testing ${name}...`, 'cyan');
-  log(`   Endpoint: ${endpoint}`, 'blue');
-  log(`   URL: ${url}`, 'blue');
-  log(`   ⚠️  Note: This requires HTML from client-side fetch`, 'yellow');
-
-  // This endpoint requires HTML, so we'll just test if it exists
-  try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ html: '<html><body>Test</body></html>', url }),
-    });
-
-    const result = await response.json();
-    
-    if (response.status === 400 && result.message?.includes('HTML')) {
-      log(`   ✅ Endpoint exists and validates input correctly`, 'green');
-      return { success: true, note: 'Endpoint exists' };
-    } else {
-      log(`   ⚠️  Unexpected response: ${response.status}`, 'yellow');
-      return { success: false, status: response.status };
-    }
-  } catch (error) {
-    log(`   ❌ ERROR: ${error.message}`, 'red');
-    return { success: false, error: error.message };
-  }
-}
 
 async function runTests() {
   log('\n🚀 Starting Funda Scraping Tests', 'cyan');
@@ -112,28 +82,18 @@ async function runTests() {
     endpoints: [],
   };
 
-  // Test all endpoints
+  // Test scraping endpoint
   const endpoints = [
-    { name: 'Basic Scraping API', path: '/api/scrape-funda-basic' },
-    { name: 'Simple Scraping API', path: '/api/scrape-funda-simple' },
-    { name: 'Advanced Scraping API', path: '/api/scrape-funda' },
-    { name: 'Client-Side Scraping API', path: '/api/scrape-funda-client', isClientSide: true },
+    { name: 'Funda Scraping API', path: '/api/scrape-funda' },
   ];
 
   for (const endpoint of endpoints) {
     results.total++;
     
-    if (endpoint.isClientSide) {
-      const result = await testClientSideEndpoint(endpoint.name, endpoint.path, TEST_FUNDA_URL);
-      results.endpoints.push({ name: endpoint.name, ...result });
-      if (result.success) results.passed++;
-      else results.failed++;
-    } else {
-      const result = await testEndpoint(endpoint.name, endpoint.path, TEST_FUNDA_URL);
-      results.endpoints.push({ name: endpoint.name, ...result });
-      if (result.success) results.passed++;
-      else results.failed++;
-    }
+    const result = await testEndpoint(endpoint.name, endpoint.path, TEST_FUNDA_URL);
+    results.endpoints.push({ name: endpoint.name, ...result });
+    if (result.success) results.passed++;
+    else results.failed++;
 
     // Wait a bit between requests to avoid rate limiting
     await new Promise(resolve => setTimeout(resolve, 1000));
