@@ -54,42 +54,47 @@ export function useFundaScraper(): UseFundaScraperReturn {
       const normalizedUrl = normalizeFundaUrl(url);
       const startTime = Date.now();
       
+      // Note: Client-side scraping is not possible due to CORS restrictions
+      // Funda blocks cross-origin requests from browsers
+      // We'll use server-side scraping with better error handling
+      console.log('🖥️ Using server-side scraping...');
+      
       // Try the basic scraping API first (most reliable)
       let response = await fetch('/api/scrape-funda-basic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: normalizedUrl }),
-      });
-
-      console.log('🔍 Basic API response status:', response.status);
-
-      // If basic API fails, try the simple API
-      if (!response.ok && response.status !== 429) {
-        console.log('Basic API failed, trying simple API...');
-        response = await fetch('/api/scrape-funda-simple', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ url: normalizedUrl }),
         });
-        console.log('🔍 Simple API response status:', response.status);
-      }
 
-      // If simple API also fails, try the advanced API
-      if (!response.ok && response.status !== 429) {
-        console.log('Simple API failed, trying advanced API...');
-        response = await fetch('/api/scrape-funda', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url: normalizedUrl }),
-        });
-        console.log('🔍 Advanced API response status:', response.status);
-      }
+        console.log('🔍 Basic API response status:', response.status);
+
+        // If basic API fails, try the simple API
+        if (!response.ok && response.status !== 429) {
+          console.log('Basic API failed, trying simple API...');
+          response = await fetch('/api/scrape-funda-simple', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: normalizedUrl }),
+          });
+          console.log('🔍 Simple API response status:', response.status);
+        }
+
+        // If simple API also fails, try the advanced API
+        if (!response.ok && response.status !== 429) {
+          console.log('Simple API failed, trying advanced API...');
+          response = await fetch('/api/scrape-funda', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: normalizedUrl }),
+          });
+          console.log('🔍 Advanced API response status:', response.status);
+        }
 
       const result: EnhancedScrapingResponse = await response.json();
 
@@ -114,9 +119,11 @@ export function useFundaScraper(): UseFundaScraperReturn {
             throw new Error(result.message || 'Ongeldige aanvraag');
           }
         } else if (response.status === 404) {
-          throw new Error(result.message || 'Woning niet gevonden of niet beschikbaar');
+          throw new Error(result.message || 'Woning niet gevonden. Probeer de handmatige invoer of controleer of de link correct is.');
         } else {
-          throw new Error(result.message || 'Er is iets misgegaan');
+          // Provide helpful error message with suggestion to use manual form
+          const errorMsg = result.message || 'Automatisch ophalen werkt niet. Gebruik de handmatige invoer om door te gaan.';
+          throw new Error(errorMsg);
         }
       }
 
