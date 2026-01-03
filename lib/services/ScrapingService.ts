@@ -112,6 +112,17 @@ export class ScrapingService {
     const timeoutId = setTimeout(() => controller.abort(), options.timeout);
 
     try {
+      // Log environment info for debugging on Vercel
+      const isVercel = !!process.env.VERCEL;
+      logger.debug('Scraping attempt', {
+        url,
+        isVercel,
+        vercelRegion: process.env.VERCEL_REGION,
+        timeout: options.timeout,
+        userAgent: options.userAgent.substring(0, 50),
+        requestId: options.requestId,
+      });
+
       const response = await fetch(url, {
         headers: this.buildHeaders(options.userAgent),
         signal: controller.signal,
@@ -120,11 +131,37 @@ export class ScrapingService {
 
       clearTimeout(timeoutId);
 
+      // Log response details for debugging
+      logger.debug('Fetch response received', {
+        url,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        requestId: options.requestId,
+      });
+
       if (!response.ok) {
+        const errorText = await response.text().catch(() => 'Could not read error response');
+        logger.warn('HTTP error response', {
+          url,
+          status: response.status,
+          statusText: response.statusText,
+          errorPreview: errorText.substring(0, 500),
+          requestId: options.requestId,
+        });
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const html = await response.text();
+      
+      // Log HTML details for debugging
+      logger.debug('HTML received', {
+        url,
+        htmlLength: html.length,
+        htmlPreview: html.substring(0, 500),
+        titleMatch: html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1],
+        requestId: options.requestId,
+      });
       
       // Check for bot detection in HTML content
       this.checkForBotDetection(html, url);
@@ -142,6 +179,20 @@ export class ScrapingService {
       return await this.extractPropertyData($, url);
     } catch (error) {
       clearTimeout(timeoutId);
+      
+      // Enhanced error logging for Vercel debugging
+      const errorDetails = {
+        url,
+        errorName: error instanceof Error ? error.name : 'Unknown',
+        errorMessage: error instanceof Error ? error.message : String(error),
+        isAbortError: error instanceof Error && error.name === 'AbortError',
+        isVercel: !!process.env.VERCEL,
+        vercelRegion: process.env.VERCEL_REGION,
+        requestId: options.requestId,
+      };
+      
+      logger.error('Scraping attempt failed', errorDetails, error instanceof Error ? error : undefined);
+      
       throw error;
     }
   }
