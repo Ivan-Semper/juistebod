@@ -380,14 +380,14 @@ export default function Home() {
           </motion.h2>
           
           <motion.div 
-            className="grid md:grid-cols-3 gap-12 mb-16"
+            className="grid md:grid-cols-3 gap-12 mb-16 items-stretch"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, staggerChildren: 0.2 }}
           >
             {/* Stap 1 */}
-            <motion.div className="relative text-center" initial={{ opacity: 0, y: 30 }}
+            <motion.div className="relative text-center flex flex-col items-center h-full" initial={{ opacity: 0, y: 30 }}
 whileInView={{ opacity: 1, y: 0 }}
 transition={{ duration: 0.6 }}>
               <div 
@@ -396,25 +396,17 @@ transition={{ duration: 0.6 }}>
               >
                 1
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Plak je Funda link</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">Vul je adres in</h3>
               <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                Kopieer de URL van de woning die je wilt kopen en plak deze in ons formulier
+                Vul postcode en huisnummer in om de locatie te vinden. De Funda-link is optioneel.
               </p>
-              <div className="text-sm text-gray-500 bg-white rounded-lg p-4 mx-auto max-w-xs">
-                💡 <strong>Tip:</strong> Werkt met alle Funda woningen
-              </div>
-              
-              {/* Arrow */}
-              <div className="hidden md:block absolute -right-6 top-8">
-                <svg width="48" height="24" viewBox="0 0 48 24" className="text-gray-300">
-                  <path d="M36 12L40 8V10H48V14H40V16L36 12Z" fill="currentColor"/>
-                  <path d="M0 11H36V13H0V11Z" fill="currentColor"/>
-                </svg>
+              <div className="text-xs text-gray-500 bg-white rounded-lg p-3 mx-auto max-w-xs min-h-[56px] flex items-center justify-center mt-auto">
+                💡 <strong>Tip:</strong> Funda-link helpt bij persoonlijk advies
               </div>
             </motion.div>
             
             {/* Stap 2 */}
-            <motion.div className="relative text-center" initial={{ opacity: 0, y: 30 }}
+            <motion.div className="relative text-center flex flex-col items-center h-full" initial={{ opacity: 0, y: 30 }}
 whileInView={{ opacity: 1, y: 0 }}
 transition={{ duration: 0.6 }}>
               <div 
@@ -425,23 +417,15 @@ transition={{ duration: 0.6 }}>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-gray-800">Vul je gegevens in</h3>
               <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                Vertel ons over jezelf en je woonsituatie voor een persoonlijk advies
+                Vul je contactgegevens in zodat we het advies persoonlijk kunnen maken.
               </p>
-              <div className="text-sm text-gray-500 bg-white rounded-lg p-4 mx-auto max-w-xs">
+              <div className="text-xs text-gray-500 bg-white rounded-lg p-3 mx-auto max-w-xs min-h-[56px] flex items-center justify-center mt-auto">
                 🔒 <strong>Veilig:</strong> Al je gegevens worden veilig opgeslagen
-              </div>
-              
-              {/* Arrow */}
-              <div className="hidden md:block absolute -right-6 top-8">
-                <svg width="48" height="24" viewBox="0 0 48 24" className="text-gray-300">
-                  <path d="M36 12L40 8V10H48V14H40V16L36 12Z" fill="currentColor"/>
-                  <path d="M0 11H36V13H0V11Z" fill="currentColor"/>
-                </svg>
               </div>
             </motion.div>
             
             {/* Stap 3 */}
-            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }}
+            <motion.div className="text-center flex flex-col items-center h-full" initial={{ opacity: 0, y: 30 }}
 whileInView={{ opacity: 1, y: 0 }}
 transition={{ duration: 0.6 }}>
               <div 
@@ -454,7 +438,7 @@ transition={{ duration: 0.6 }}>
               <p className="text-lg text-gray-600 leading-relaxed mb-4">
                 Binnen 24 uur krijg je een uitgebreid bodadvies in je mailbox
               </p>
-              <div className="text-sm text-gray-500 bg-white rounded-lg p-4 mx-auto max-w-xs">
+              <div className="text-xs text-gray-500 bg-white rounded-lg p-3 mx-auto max-w-xs min-h-[56px] flex items-center justify-center mt-auto">
                 ⚡ <strong>Snel:</strong> Gemiddeld binnen 12 uur geleverd
               </div>
             </motion.div>
@@ -751,7 +735,7 @@ transition={{ duration: 0.6 }}>
       {/* Footer */}
       <footer id="contact" className="py-16 px-6" style={{ backgroundColor: '#FAF9F6', borderTop: '1px solid rgba(124, 132, 113, 0.2)' }}>
         <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
+          <div className="grid md:grid-cols-2 gap-12 mb-12 items-center">
             {/* Company Info */}
             <div className="text-center md:text-left">
               <div className="mb-4">
@@ -768,17 +752,33 @@ transition={{ duration: 0.6 }}>
               </p>
             </div>
 
-            {/* Contact Info */}
-            <div className="text-center md:text-left">
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                Neem contact op
-              </h3>
-              <p className="text-lg text-gray-600 mb-2">
-                Telefoon: 06-12345678
-              </p>
-              <p className="text-lg text-gray-600">
-                Email: info@juistebod.nl
-              </p>
+            {/* Contact Info + Photo */}
+            <div className="flex justify-center md:justify-end">
+              <div className="flex items-center gap-6">
+                <div className="text-center md:text-left">
+                  <h3 className="text-2xl font-bold mb-4 text-gray-800">
+                    Neem contact op
+                  </h3>
+                  <p className="text-lg text-gray-800 mb-2">
+                    Netraam Kremer
+                  </p>
+                  <p className="text-lg text-gray-600 mb-2">
+                    Telefoon: 06-12345678
+                  </p>
+                  <p className="text-lg text-gray-600">
+                    Email: info@juistebod.nl
+                  </p>
+                </div>
+                <div className="w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden shadow-md md:ml-3">
+                  <Image
+                    src="/images/Netraam_foto.jpeg"
+                    alt="Contactpersoon JuisteBod"
+                    width={192}
+                    height={192}
+                    className="w-full h-full object-cover grayscale"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

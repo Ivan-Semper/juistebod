@@ -109,7 +109,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                     name="postcode"
                     value={formData.postcode}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Bijv: 3815LC"
                     pattern="[0-9]{4}[A-Za-z]{2}"
                     title="Voer een geldige Nederlandse postcode in (bijv: 3815LC)"
@@ -125,7 +125,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                     name="houseNumber"
                     value={formData.houseNumber}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Bijv: 93"
                     required
                   />
@@ -141,11 +141,11 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                   name="fundaUrl"
                   value={formData.fundaUrl}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Plak hier je Funda woninglink"
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  Deze link gebruiken we alleen voor het bodadvies, niet voor de kaart.
+                  We gebruiken de link om een zo goed mogelijk bodadvies voor je te maken.
                 </p>
               </div>
 
