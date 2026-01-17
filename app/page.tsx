@@ -735,7 +735,7 @@ transition={{ duration: 0.6 }}>
       {/* Footer */}
       <footer id="contact" className="py-16 px-6" style={{ backgroundColor: '#FAF9F6', borderTop: '1px solid rgba(124, 132, 113, 0.2)' }}>
         <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 mb-12 items-center">
+          <div className="grid md:grid-cols-3 gap-12 mb-12 items-center">
             {/* Company Info */}
             <div className="text-center md:text-left">
               <div className="mb-4">
@@ -752,32 +752,32 @@ transition={{ duration: 0.6 }}>
               </p>
             </div>
 
-            {/* Contact Info + Photo */}
+            {/* Contact Info */}
+            <div className="text-center md:text-center">
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">
+                Neem contact op
+              </h3>
+              <p className="text-lg text-gray-800 mb-2">
+                Netraam Kremer
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                Telefoon: 06-12345678
+              </p>
+              <p className="text-lg text-gray-600">
+                Email: info@juistebod.nl
+              </p>
+            </div>
+
+            {/* Contact Photo */}
             <div className="flex justify-center md:justify-end">
-              <div className="flex items-center gap-6">
-                <div className="text-center md:text-left">
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                    Neem contact op
-                  </h3>
-                  <p className="text-lg text-gray-800 mb-2">
-                    Netraam Kremer
-                  </p>
-                  <p className="text-lg text-gray-600 mb-2">
-                    Telefoon: 06-12345678
-                  </p>
-                  <p className="text-lg text-gray-600">
-                    Email: info@juistebod.nl
-                  </p>
-                </div>
-                <div className="w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden shadow-md md:ml-3">
-                  <Image
-                    src="/images/Netraam_foto.jpeg"
-                    alt="Contactpersoon JuisteBod"
-                    width={192}
-                    height={192}
-                    className="w-full h-full object-cover grayscale"
-                  />
-                </div>
+              <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden shadow-md">
+                <Image
+                  src="/images/Netraam_foto.jpeg"
+                  alt="Contactpersoon JuisteBod"
+                  width={192}
+                  height={192}
+                  className="w-full h-full object-cover grayscale"
+                />
               </div>
             </div>
           </div>
