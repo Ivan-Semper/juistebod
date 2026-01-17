@@ -408,7 +408,7 @@ export class ScrapingService {
       }
     }
 
-    return 'Address not found';
+    return '';
   }
 
   private extractPriceAdvanced($: cheerio.CheerioAPI): string {

@@ -62,8 +62,79 @@ Google Maps API heeft een gratis tier:
 Dit is meer dan genoeg voor development en kleine projecten.
 
 ## Troubleshooting
+
+### Veelvoorkomende problemen waarom Google Maps API stopt met werken:
+
+#### 1. API Key Restricties te streng
+**Symptoom:** "RefererNotAllowedMapError" of "InvalidKeyMapError" in console
+
+**Oplossing:**
+- Ga naar Google Cloud Console > APIs & Services > Credentials
+- Klik op je API key
+- Onder "Application restrictions", zorg dat je hebt:
+  - `localhost:3000/*`
+  - `localhost:3001/*`
+  - Je productie domain (bijv. `https://jouwsite.nl/*`)
+- **Let op:** Als je restricties hebt ingesteld, moet je exacte URL matchen!
+
+#### 2. Billing niet ingeschakeld
+**Symptoom:** "BillingNotEnabledMapError" of kaart laadt niet
+
+**Oplossing:**
+- Google vereist sinds 2018 een billing account (zelfs voor gratis tier)
+- Ga naar Google Cloud Console > Billing
+- Voeg een billing account toe (je wordt alleen gefactureerd boven de gratis quota)
+- Gratis tier: 28,000 map loads + 40,000 geocoding requests per maand
+
+#### 3. API niet geactiveerd
+**Symptoom:** "ApiNotActivatedMapError"
+
+**Oplossing:**
+- Ga naar APIs & Services > Library
+- Zoek en activeer:
+  - **Maps JavaScript API** (verplicht)
+  - **Geocoding API** (verplicht)
+  - **Places API** (optioneel, alleen als je Places gebruikt)
+
+#### 4. Quota overschreden
+**Symptoom:** "OverQueryLimitMapError" of kaart werkt soms wel, soms niet
+
+**Oplossing:**
+- Check je gebruik in Google Cloud Console > APIs & Services > Dashboard
+- Wacht tot quota reset (meestal maandelijks)
+- Overweeg billing account voor hogere quota
+
+#### 5. Environment variable niet geladen
+**Symptoom:** "API key niet gevonden" error
+
+**Oplossing:**
+- Zorg dat `.env.local` in de **root** van je project staat (niet in app/ of andere folders)
+- Zorg dat de variabele begint met `NEXT_PUBLIC_` (vereist voor client-side)
+- **Herstart je development server** na het toevoegen/wijzigen van .env.local
+- Check of er geen typos zijn in de variabele naam
+
+#### 6. API key ongeldig of verwijderd
+**Symptoom:** Kaart laadt niet, geen specifieke error
+
+**Oplossing:**
+- Check of je API key nog bestaat in Google Cloud Console
+- Genereer een nieuwe key als de oude is verwijderd
+- Update `.env.local` met de nieuwe key
+- Herstart development server
+
+### Test je API key
+
+Je kunt je API key testen via:
+```
+http://localhost:3000/api/test-google-maps
+```
+
+Deze route geeft gedetailleerde informatie over wat er mis is met je API key.
+
+### Algemene tips
 - Zorg dat je `.env.local` file in de root van je project staat (niet in een subfolder)
 - Herstart altijd je development server na het toevoegen van environment variabelen
-- Check de browser console voor error messages
+- Check de browser console (F12) voor specifieke error messages
 - Zorg dat je API key de juiste APIs heeft geactiveerd
+- Check of billing is ingeschakeld (vereist sinds 2018)
 

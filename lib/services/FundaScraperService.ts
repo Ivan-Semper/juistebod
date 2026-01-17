@@ -91,7 +91,7 @@ export class FundaScraperService {
     }
 
     // Fallback: extract from URL
-    return this.extractAddressFromUrl(url) || 'Address not found';
+    return this.extractAddressFromUrl(url) || '';
   }
 
   private extractAddressFromUrl(url: string): string | null {

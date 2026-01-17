@@ -90,8 +90,9 @@ export default function CheckoutPage() {
         <GoogleMap 
           address={propertyData.address}
           propertyTitle={propertyData.title}
-          onMapLoaded={() => console.log('Background map loaded')}
           fullScreen={true}
+          showInfoWindow={false}
+          showZoomControl={false}
         />
       </div>
 

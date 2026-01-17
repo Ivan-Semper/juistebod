@@ -8,11 +8,19 @@ interface GoogleMapProps {
   propertyTitle?: string;
   onMapLoaded?: () => void;
   fullScreen?: boolean;
+  showInfoWindow?: boolean;
+  showZoomControl?: boolean;
 }
 
-export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoaded, fullScreen = false }: GoogleMapProps) {
+export default function GoogleMap({
+  address,
+  propertyTitle = "Locatie",
+  onMapLoaded,
+  fullScreen = false,
+  showInfoWindow = true,
+  showZoomControl = true
+}: GoogleMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,6 +28,8 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
     if (!address || !mapRef.current) return;
 
     let isMounted = true;
+    let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
+    const isDev = process.env.NODE_ENV !== 'production';
 
     const initializeMap = async () => {
       try {
@@ -28,10 +38,22 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
 
         // Debug: Check if API key is loaded
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-        console.log('API Key loaded:', apiKey ? `${apiKey.substring(0, 10)}...` : 'NOT FOUND');
+        if (isDev) {
+          console.log('🔍 Google Maps Debug Info:', {
+            apiKeyPresent: !!apiKey,
+            apiKeyLength: apiKey?.length || 0,
+            apiKeyPrefix: apiKey ? `${apiKey.substring(0, 10)}...` : 'NOT FOUND'
+          });
+        }
         
         if (!apiKey) {
-          setError('Google Maps API key niet gevonden. Check je .env.local file.');
+          const errorMsg = 'Google Maps API key niet gevonden. Herstart je development server na het toevoegen van NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in .env.local';
+          if (isDev) {
+            console.error('❌', errorMsg);
+          }
+          if (isMounted) {
+            setError(errorMsg);
+          }
           setIsLoading(false);
           return;
         }
@@ -43,7 +65,52 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
           libraries: ['places']
         });
 
-        const google = await loader.load();
+        let google;
+        try {
+          if (isDev) {
+            console.log('🔄 Loading Google Maps API...');
+          }
+          google = await loader.load();
+          if (isDev) {
+            console.log('✅ Google Maps API loaded successfully');
+          }
+        } catch (loaderError: any) {
+          if (isDev) {
+            console.error('❌ Google Maps Loader error:', loaderError);
+            console.error('Error details:', {
+              message: loaderError.message,
+              name: loaderError.name,
+              stack: loaderError.stack,
+              toString: loaderError.toString()
+            });
+          }
+          
+          // Check for specific error types
+          const errorMessage = String(loaderError.message || loaderError.toString() || '').toLowerCase();
+          const errorName = String(loaderError.name || '').toLowerCase();
+          
+          let userFriendlyError = '';
+          
+          if (errorMessage.includes('invalidkey') || errorMessage.includes('referernotallowed') || errorName.includes('invalidkey')) {
+            userFriendlyError = 'API key is ongeldig of heeft verkeerde restricties.\n\nOplossing:\n1. Ga naar Google Cloud Console > APIs & Services > Credentials\n2. Klik op je API key\n3. Voeg toe aan HTTP referrers: localhost:3000/*\n4. Zorg dat Maps JavaScript API en Geocoding API geactiveerd zijn';
+          } else if (errorMessage.includes('apinotactivated') || errorName.includes('apinotactivated')) {
+            userFriendlyError = 'Maps JavaScript API is niet geactiveerd.\n\nOplossing:\n1. Ga naar Google Cloud Console > APIs & Services > Library\n2. Zoek en activeer: Maps JavaScript API\n3. Zoek en activeer: Geocoding API';
+          } else if (errorMessage.includes('billing') || errorMessage.includes('billingnotenabled') || errorName.includes('billing')) {
+            userFriendlyError = 'Billing is niet ingeschakeld.\n\nOplossing:\n1. Ga naar Google Cloud Console > Billing\n2. Voeg een billing account toe (vereist sinds 2018)\n3. Je wordt alleen gefactureerd boven de gratis quota';
+          } else if (errorMessage.includes('quota') || errorMessage.includes('overquerylimit') || errorName.includes('quota')) {
+            userFriendlyError = 'API quota overschreden.\n\nOplossing:\n1. Wacht even en probeer later opnieuw\n2. Check je quota in Google Cloud Console\n3. Overweeg een billing account voor hogere quota';
+          } else if (errorMessage.includes('request_denied') || errorMessage.includes('denied')) {
+            userFriendlyError = 'API key geweigerd.\n\nMogelijke oorzaken:\n- API restricties zijn te streng\n- Maps JavaScript API niet geactiveerd\n- Geocoding API niet geactiveerd\n- Billing niet ingeschakeld\n\nTest je API key: http://localhost:3000/api/test-google-maps';
+          } else {
+            userFriendlyError = `Google Maps fout: ${loaderError.message || 'Onbekende fout'}\n\nTest je API key: http://localhost:3000/api/test-google-maps\nCheck browser console (F12) voor meer details.`;
+          }
+          
+          if (isMounted) {
+            setError(userFriendlyError);
+          }
+          setIsLoading(false);
+          return;
+        }
         
         if (!isMounted) return;
 
@@ -92,7 +159,7 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
-          zoomControl: true,
+          zoomControl: showZoomControl,
           zoomControlOptions: {
             position: (google.maps as any).ControlPosition.RIGHT_BOTTOM
           },
@@ -100,8 +167,6 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
           disableDefaultUI: true,
           gestureHandling: 'cooperative'
         });
-
-        mapInstanceRef.current = map;
 
         // Geocode the address
         const geocoder = new google.maps.Geocoder();
@@ -116,23 +181,33 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
         
         const tryGeocode = (addressIndex: number = 0): void => {
           if (addressIndex >= addressVariations.length) {
-            console.error('All geocoding attempts failed');
-            setError('Locatie kon niet worden gevonden');
+            if (isDev) {
+              console.error('All geocoding attempts failed');
+            }
+            if (isMounted) {
+              setError('Locatie kon niet worden gevonden');
+            }
             setIsLoading(false);
             return;
           }
           
           const currentAddress = addressVariations[addressIndex];
-          console.log(`Trying address ${addressIndex + 1}:`, currentAddress);
+          if (isDev) {
+            console.log(`Trying address ${addressIndex + 1}:`, currentAddress);
+          }
           
           geocoder.geocode({ address: currentAddress }, (results: any, status: any) => {
             if (!isMounted) return;
             
-            console.log('Geocoding result:', { status, results, address: currentAddress });
+            if (isDev) {
+              console.log('Geocoding result:', { status, results, address: currentAddress });
+            }
 
             if (status === 'OK' && results && results[0]) {
               const location = results[0].geometry.location;
-              console.log('Success! Location found:', location.toString());
+              if (isDev) {
+                console.log('Success! Location found:', location.toString());
+              }
               
               // Create simple, elegant marker
               const marker = new google.maps.Marker({
@@ -150,25 +225,28 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
                 animation: (google.maps as any).Animation.DROP
               });
 
-              // Simple info window
-              const infoWindow = new google.maps.InfoWindow({
-                content: `
-                  <div style="padding: 12px; font-family: Inter, sans-serif; max-width: 200px;">
-                    <h3 style="margin: 0 0 8px 0; color: #1F3C88; font-size: 16px; font-weight: 600;">
-                      ${propertyTitle}
-                    </h3>
-                    <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.4;">
-                      ${address}
-                    </p>
-                  </div>
-                `,
-                disableAutoPan: false
-              });
+              const infoWindow = showInfoWindow
+                ? new google.maps.InfoWindow({
+                    content: `
+                      <div style="padding: 12px; font-family: Inter, sans-serif; max-width: 200px;">
+                        <h3 style="margin: 0 0 8px 0; color: #1F3C88; font-size: 16px; font-weight: 600;">
+                          ${propertyTitle}
+                        </h3>
+                        <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.4;">
+                          ${address}
+                        </p>
+                      </div>
+                    `,
+                    disableAutoPan: false
+                  })
+                : null;
 
-              // Show info window on marker click
-              marker.addListener('click', () => {
-                infoWindow.open(map, marker);
-              });
+              if (infoWindow) {
+                // Show info window on marker click
+                marker.addListener('click', () => {
+                  infoWindow.open(map, marker);
+                });
+              }
 
               // Smooth zoom to neighborhood level (not too close)
               const zoomToLocation = () => {
@@ -178,34 +256,44 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
                 // Gradual zoom to neighborhood level (14 is perfect for seeing the area)
                 const targetZoom = 14;
                 const currentZoom = map.getZoom() || 8;
+                const zoomDelay = fullScreen ? 180 : 140;
                 
                 if (currentZoom !== targetZoom) {
                   const zoomStep = targetZoom > currentZoom ? 1 : -1;
                   let step = currentZoom;
                   
-                  const zoomInterval = setInterval(() => {
+                  const animateZoom = () => {
+                    if (!isMounted) return;
                     step += zoomStep;
                     map.setZoom(step);
                     
                     if (step === targetZoom) {
-                      clearInterval(zoomInterval);
-                      // Show info window after zoom complete
-                      setTimeout(() => {
-                        infoWindow.open(map, marker);
-                      }, 800);
+                      if (infoWindow) {
+                        // Show info window after zoom complete
+                        setTimeout(() => {
+                          infoWindow.open(map, marker);
+                        }, 800);
+                      }
+                      return;
                     }
-                  }, 200); // Smooth zoom steps
+                    
+                    zoomTimeout = setTimeout(animateZoom, zoomDelay);
+                  };
+                  
+                  zoomTimeout = setTimeout(animateZoom, zoomDelay);
                 }
               };
 
               // Start zoom animation after brief delay
-              setTimeout(zoomToLocation, 500);
+              setTimeout(zoomToLocation, fullScreen ? 900 : 500);
               
               setIsLoading(false);
               onMapLoaded?.();
               
             } else {
-              console.error(`Geocoding failed for address ${addressIndex + 1}:`, status);
+              if (isDev) {
+                console.error(`Geocoding failed for address ${addressIndex + 1}:`, status);
+              }
               // Try next address variation
               tryGeocode(addressIndex + 1);
             }
@@ -215,9 +303,30 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
         // Start geocoding with first address variation
         tryGeocode();
 
-      } catch (error) {
-        console.error('Map initialization error:', error);
-        setError('Kaart kon niet worden geladen');
+      } catch (error: any) {
+        if (isDev) {
+          console.error('Map initialization error:', error);
+        }
+        
+        // More specific error messages
+        if (error.message?.includes('API key')) {
+          if (isMounted) {
+            setError('Google Maps API key probleem. Check je .env.local en Google Cloud Console.');
+          }
+        } else if (error.message?.includes('billing') || error.message?.includes('Billing')) {
+          if (isMounted) {
+            setError('Billing moet ingeschakeld zijn in Google Cloud Console.');
+          }
+        } else if (error.message?.includes('quota') || error.message?.includes('Quota')) {
+          if (isMounted) {
+            setError('API quota overschreden. Check je gebruik in Google Cloud Console.');
+          }
+        } else {
+          if (isMounted) {
+            setError(`Kaart kon niet worden geladen: ${error.message || 'Onbekende fout'}`);
+          }
+        }
+        
         setIsLoading(false);
       }
     };
@@ -226,6 +335,10 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
 
     return () => {
       isMounted = false;
+      if (zoomTimeout) {
+        clearTimeout(zoomTimeout);
+        zoomTimeout = null;
+      }
     };
   }, [address, propertyTitle, onMapLoaded]);
 
@@ -233,7 +346,7 @@ export default function GoogleMap({ address, propertyTitle = "Locatie", onMapLoa
     return (
       <div className={`w-full ${fullScreen ? 'h-screen' : 'h-64'} ${fullScreen ? 'bg-gray-100' : 'bg-gray-50'} ${fullScreen ? '' : 'rounded-lg'} flex items-center justify-center ${fullScreen ? '' : 'border'}`}>
         <div className="text-center text-gray-600">
-          <p className="text-sm">{error}</p>
+          <p className="text-sm whitespace-pre-line">{error}</p>
           <p className="text-xs mt-2 opacity-75">Adres: {address}</p>
         </div>
       </div>

@@ -17,11 +17,8 @@ TEST_FUNDA_URL=https://www.funda.nl/koop/amsterdam/koningin-julianalaan-20-3951a
 
 ### Wat het Test Script Doet
 
-Het test script test alle beschikbare scraping endpoints:
-1. **Basic Scraping API** (`/api/scrape-funda-basic`)
-2. **Simple Scraping API** (`/api/scrape-funda-simple`)
-3. **Advanced Scraping API** (`/api/scrape-funda`)
-4. **Client-Side Scraping API** (`/api/scrape-funda-client`)
+Het test script test de scraping endpoint:
+1. **Funda Scraping API** (`/api/scrape-funda`)
 
 ### Test Resultaten Interpreteren
 
@@ -51,12 +48,7 @@ npm run dev
 ### 3. API Direct Testen
 
 ```bash
-# Test Basic API
-curl -X POST http://localhost:3000/api/scrape-funda-basic \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://www.funda.nl/koop/amsterdam/huis-12345678-address/"}'
-
-# Test Advanced API
+# Test Scraping API
 curl -X POST http://localhost:3000/api/scrape-funda \
   -H "Content-Type: application/json" \
   -d '{"url": "https://www.funda.nl/koop/amsterdam/huis-12345678-address/"}'

@@ -5,19 +5,9 @@ import Image from "next/image";
 import PropertyForm from "./components/PropertyForm";
 import GoogleMap from "./components/GoogleMap";
 import AnimatedWeegschaal from "./components/AnimatedWeegschaal";
-import ManualPropertyForm from "./components/ManualPropertyForm";
 import { PropertyData } from "@/lib/types/PropertyTypes";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-// Temporarily disabled animations for build fix
-// import { 
-//   useScrollAnimation, 
-//   fadeInUp, 
-//   fadeInLeft, 
-//   fadeInRight, 
-//   staggerContainer, 
-//   scaleIn
-// } from "@/lib/hooks/useScrollAnimation";
 
 // Hero carousel images - automatisch gegenereerd uit folder
 const generateHeroImages = () => {
@@ -40,7 +30,6 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [showManualForm, setShowManualForm] = useState(false);
   const router = useRouter();
 
   // Automatische carousel wisseling
@@ -79,8 +68,17 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
+  const normalizeAddress = (value?: string) => {
+    const cleaned = (value || '').trim();
+    if (!cleaned) return '';
+    const lowered = cleaned.toLowerCase();
+    if (lowered === 'address not found' || lowered === 'not found') return '';
+    return cleaned;
+  };
+
   const handlePropertyFound = (data: PropertyData) => {
-    setPropertyData(data);
+    const cleanedAddress = normalizeAddress(data.address);
+    setPropertyData({ ...data, address: cleanedAddress });
     // Scroll to results section
     setTimeout(() => {
       const resultsSection = document.getElementById('property-results');
@@ -92,6 +90,9 @@ export default function Home() {
 
   const handleProceedToCheckout = () => {
     if (propertyData) {
+      if (!normalizeAddress(propertyData.address)) {
+        return;
+      }
       // Store property data in session storage for checkout page
       sessionStorage.setItem('propertyData', JSON.stringify(propertyData));
       router.push('/checkout');
@@ -204,17 +205,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {!showManualForm ? (
-              <PropertyForm 
-                onPropertyFound={handlePropertyFound} 
-                onShowManualForm={() => setShowManualForm(true)}
-              />
-            ) : (
-              <ManualPropertyForm 
-                onPropertyFound={handlePropertyFound}
-                onBack={() => setShowManualForm(false)}
-              />
-            )}
+            <PropertyForm onPropertyFound={handlePropertyFound} />
           </motion.div>
         </div>
       </section>
@@ -240,21 +231,32 @@ export default function Home() {
                     {propertyData.title}
                   </h3>
                   <div className="space-y-3">
-                    <p className="text-gray-800"><strong>Adres:</strong> {propertyData.address || 'Niet beschikbaar'}</p>
-                    <p className="text-gray-800"><strong>Prijs:</strong> {propertyData.price || 'Niet beschikbaar'}</p>
-                    <p className="text-gray-800"><strong>Type:</strong> {propertyData.propertyType || 'Niet beschikbaar'}</p>
-                    <p className="text-gray-800"><strong>Oppervlakte:</strong> {propertyData.surface || 'Niet beschikbaar'}</p>
-                    <p className="text-gray-800"><strong>Kamers:</strong> {propertyData.rooms || 'Niet beschikbaar'}</p>
-                    <p className="text-gray-800"><strong>Bouwjaar:</strong> {propertyData.yearBuilt || 'Niet beschikbaar'}</p>
+                    <p className="text-gray-800">
+                      <strong>Adres:</strong> {normalizeAddress(propertyData.address) || 'Vul adres aan'}
+                    </p>
+                    {propertyData.price && (
+                      <p className="text-gray-800"><strong>Prijs:</strong> {propertyData.price}</p>
+                    )}
+                    {propertyData.propertyType && (
+                      <p className="text-gray-800"><strong>Type:</strong> {propertyData.propertyType}</p>
+                    )}
+                    {propertyData.surface && (
+                      <p className="text-gray-800"><strong>Oppervlakte:</strong> {propertyData.surface}</p>
+                    )}
+                    {propertyData.rooms && (
+                      <p className="text-gray-800"><strong>Kamers:</strong> {propertyData.rooms}</p>
+                    )}
+                    {propertyData.yearBuilt && (
+                      <p className="text-gray-800"><strong>Bouwjaar:</strong> {propertyData.yearBuilt}</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Google Map with Location */}
                 <div>
                   <GoogleMap 
-                    address={propertyData.address}
+                    address={normalizeAddress(propertyData.address)}
                     propertyTitle={propertyData.title}
-                    onMapLoaded={() => console.log('Map loaded successfully')}
                   />
                 </div>
               </div>

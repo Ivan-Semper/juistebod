@@ -6,11 +6,7 @@ const mollieClient = createMollieClient({ apiKey: mollieApiKey });
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔍 Mollie API Key:', process.env.MOLLIE_API_KEY ? 'Set' : 'Missing');
-    console.log('🔍 Webhook URL:', process.env.MOLLIE_WEBHOOK_URL);
-    
     const { orderId, amount, description, redirectUrl } = await request.json();
-    console.log('🔍 Payment data:', { orderId, amount, description, redirectUrl });
 
     // Maak een nieuwe betaling aan bij Mollie
     const payment = await mollieClient.payments.create({

@@ -1,178 +1,172 @@
 "use client";
 
 import { useState, FormEvent } from 'react';
-import { useFundaScraper } from '@/lib/hooks/useFundaScraper';
 import { validateFundaUrl } from '@/lib/utils/linkValidator';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PropertyFormProps {
   onPropertyFound: (propertyData: any) => void;
-  onShowManualForm?: () => void;
 }
 
-export default function PropertyForm({ onPropertyFound, onShowManualForm }: PropertyFormProps) {
-  const [url, setUrl] = useState('');
+export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
+  const [showFields, setShowFields] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState('');
-  const [showManualOption, setShowManualOption] = useState(true); // Always show manual option
-  const { scrapeProperty, isLoading, error } = useFundaScraper();
+  const [formData, setFormData] = useState({
+    postcode: '',
+    houseNumber: '',
+    fundaUrl: ''
+  });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setValidationError('');
 
-    if (!url.trim()) {
-      setValidationError('Voer een Funda link in');
+    const postcode = formData.postcode.replace(/\s+/g, '').toUpperCase();
+    const houseNumber = formData.houseNumber.trim();
+    const fundaUrl = formData.fundaUrl.trim();
+
+    if (!postcode || !houseNumber) {
+      setValidationError('Postcode en huisnummer zijn verplicht');
       return;
     }
 
-    if (!validateFundaUrl(url)) {
-      setValidationError('Voer een geldige Funda woninglink in');
+    if (fundaUrl && !validateFundaUrl(fundaUrl)) {
+      setValidationError('Voer een geldige Funda woninglink in (optioneel veld)');
       return;
     }
 
-    const propertyData = await scrapeProperty(url);
-    if (propertyData) {
+    setIsSubmitting(true);
+    try {
+      const address = `${postcode} ${houseNumber}`;
+      const propertyData = {
+        url: fundaUrl || 'Manual entry',
+        title: `Woning in ${postcode}`,
+        address,
+        price: '',
+        location: '',
+        propertyType: '',
+        surface: '',
+        rooms: '',
+        yearBuilt: '',
+        images: [],
+        description: '',
+        features: [],
+        scrapedAt: new Date().toISOString(),
+      };
+
       onPropertyFound(propertyData);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      {/* Manual Entry - Prominent Option */}
-      {onShowManualForm && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200 shadow-lg"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                📝 Handmatige Invoer
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Voer je woninggegevens direct in. Werkt altijd en is snel!
-              </p>
-              <motion.button
-                onClick={onShowManualForm}
-                className="px-6 py-3 bg-white text-blue-600 rounded-lg font-medium shadow-md hover:shadow-lg transition-all border-2 border-blue-200"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Start met handmatige invoer →
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-      )}
+      <div className="text-center">
+        <h3 className="text-xl font-semibold text-white mb-2">
+          Vul je woninggegevens in
+        </h3>
+        <p className="text-base text-white/90 mb-6">
+          We hebben alleen postcode en huisnummer nodig om de locatie te vinden.
+        </p>
+        {!showFields && (
+          <motion.button
+            type="button"
+            onClick={() => setShowFields(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/40 bg-white/10 text-white/90 hover:text-white hover:bg-white/20 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Gegevens invullen
+            <span className="text-lg leading-none">→</span>
+          </motion.button>
+        )}
+      </div>
 
-      {/* Divider */}
-      {onShowManualForm && (
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-500">of</span>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showFields && (
+          <motion.form
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.75, ease: 'easeOut' }}
+            className="mt-6 space-y-4 bg-white/75 rounded-2xl shadow-lg p-6 backdrop-blur-sm"
+          >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Postcode <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="postcode"
+                    value={formData.postcode}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Bijv: 3815LC"
+                    pattern="[0-9]{4}[A-Za-z]{2}"
+                    title="Voer een geldige Nederlandse postcode in (bijv: 3815LC)"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Huisnummer <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="houseNumber"
+                    value={formData.houseNumber}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Bijv: 93"
+                    required
+                  />
+                </div>
+              </div>
 
-      {/* Automatic Scraping Form */}
-      <form onSubmit={handleSubmit} className="w-full">
-        <motion.div 
-          className="bg-white rounded-full p-2 shadow-lg"
-          whileHover={{ 
-            boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
-            transition: { duration: 0.2 }
-          }}
-          whileFocus={{ 
-            boxShadow: "0 8px 30px rgba(31, 60, 136, 0.15)",
-            transition: { duration: 0.2 }
-          }}
-        >
-          <div className="flex items-center">
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="Plak hier je Funda woninglink (optioneel)"
-              className="flex-1 px-6 py-4 text-gray-700 placeholder-gray-500 bg-transparent border-none outline-none text-sm md:text-base min-w-0"
-              disabled={isLoading}
-            />
-            <motion.button 
-              type="submit"
-              disabled={isLoading || !url.trim()}
-              className="text-white px-6 py-4 rounded-full font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: '#1F3C88' }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 10px 25px rgba(31, 60, 136, 0.3)",
-                transition: { duration: 0.2 }
-              }}
-              whileTap={{ 
-                scale: 0.98,
-                transition: { duration: 0.1 }
-              }}
-              animate={{
-                boxShadow: "0 4px 15px rgba(31, 60, 136, 0.2)"
-              }}
-            >
-              {isLoading ? 'Analyseren...' : 'Probeer automatisch'}
-            </motion.button>
-          </div>
-        </motion.div>
-      </form>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Funda link (optioneel)
+                </label>
+                <input
+                  type="url"
+                  name="fundaUrl"
+                  value={formData.fundaUrl}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Plak hier je Funda woninglink"
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Deze link gebruiken we alleen voor het bodadvies, niet voor de kaart.
+                </p>
+              </div>
 
-      {validationError && (
-        <motion.p 
-          className="mt-4 text-red-600 text-center text-sm"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {validationError}
-        </motion.p>
-      )}
-      
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4"
-        >
-          <p className="text-red-600 text-sm text-center mb-3">
-            {error}
-          </p>
-          {onShowManualForm && (
-            <div className="text-center">
-              <motion.button
-                onClick={onShowManualForm}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Gebruik handmatige invoer →
-              </motion.button>
-            </div>
-          )}
-        </motion.div>
-      )}
+              {validationError && (
+                <p className="text-sm text-red-600">{validationError}</p>
+              )}
 
-      {isLoading && (
-        <motion.div 
-          className="mt-4 text-center text-gray-600"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="inline-flex items-center">
-            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-gray-600 rounded-full mr-2"></div>
-            Woning gegevens ophalen...
-          </div>
-        </motion.div>
-      )}
+              <div className="flex justify-center">
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {isSubmitting ? 'Bezig...' : 'Doorgaan'}
+                </motion.button>
+              </div>
+          </motion.form>
+        )}
+      </AnimatePresence>
     </div>
   );
-} 
+}
