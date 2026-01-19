@@ -55,14 +55,13 @@ export default function CheckoutPage() {
         setOrderId(result.data.orderId);
         setShowPayment(true);
         
-        // Show success message
-        alert(`Bedankt ${formData.firstName}! Je order is aangemaakt. Je kunt nu betalen.`);
+        // Order created; show payment section
       } else {
         throw new Error(result.error || 'Failed to create order');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Er is een fout opgetreden. Probeer het opnieuw of neem contact met ons op.');
+      // Keep UX clean; errors are logged and can be surfaced inline if needed
     }
   };
 
@@ -162,10 +161,9 @@ export default function CheckoutPage() {
                   
                   <PaymentButton
                     orderId={orderId!}
-                    amount={29.95}
+                    amount={49.95}
                     description="Persoonlijk Bodadvies - JuisteBod"
                     onPaymentSuccess={() => {
-                      alert('Betaling succesvol! Je ontvangt binnen 24 uur je rapport.');
                       router.push('/');
                     }}
                   />

@@ -16,7 +16,7 @@ function SuccessContent() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAF9F6' }}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FAF9F6] to-[#EEF1EC]">
       <div className="max-w-md mx-auto text-center p-8">
         <div className="bg-white/80 rounded-2xl shadow-lg p-8 backdrop-blur-sm">
           {/* Success Icon */}
