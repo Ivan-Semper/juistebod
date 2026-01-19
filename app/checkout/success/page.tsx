@@ -34,14 +34,6 @@ function SuccessContent() {
             Je betaling is verwerkt. Je ontvangt een bevestiging per e-mail. Binnen 24 uur ontvang je jouw bodadvies.
           </p>
 
-          {orderId && (
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600">
-                Order ID: <span className="font-mono">{orderId}</span>
-              </p>
-            </div>
-          )}
-
           <div className="space-y-4">
             <button
               onClick={() => router.push('/')}
