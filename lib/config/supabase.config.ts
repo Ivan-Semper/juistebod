@@ -25,7 +25,7 @@ export type Database = {
           email: string
           first_name: string
           last_name: string
-          gender: string | null
+          phone: string | null
           property_url: string
           property_data: any
           payment_status: string
@@ -40,7 +40,7 @@ export type Database = {
           email: string
           first_name: string
           last_name: string
-          gender?: string | null
+          phone?: string | null
           property_url: string
           property_data: any
           payment_status?: string
@@ -55,7 +55,7 @@ export type Database = {
           email?: string
           first_name?: string
           last_name?: string
-          gender?: string | null
+          phone?: string | null
           property_url?: string
           property_data?: any
           payment_status?: string

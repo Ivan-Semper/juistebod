@@ -8,7 +8,7 @@ export class DatabaseService {
     email: string
     firstName: string
     lastName: string
-    gender?: string
+    phone?: string
     propertyUrl: string
     propertyData: PropertyData
     amount?: number
@@ -18,7 +18,7 @@ export class DatabaseService {
         email: data.email,
         first_name: data.firstName,
         last_name: data.lastName,
-        gender: data.gender || null,
+        phone: data.phone || null,
         property_url: data.propertyUrl,
         property_data: data.propertyData,
         payment_status: 'pending',

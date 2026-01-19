@@ -30,6 +30,7 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
   // Automatische carousel wisseling
@@ -68,6 +69,16 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   const normalizeAddress = (value?: string) => {
     const cleaned = (value || '').trim();
     if (!cleaned) return '';
@@ -103,7 +114,7 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: '#FAF9F6' }}>
       {/* Header Navigation */}
       <motion.header 
-        className="fixed top-0 w-full z-50 bg-white/50 backdrop-blur-md shadow-sm"
+        className="fixed top-0 w-full z-50 bg-white shadow-sm"
         initial={{ y: 0, opacity: 1 }}
         animate={{ 
           y: isNavVisible ? 0 : -100,
@@ -135,8 +146,14 @@ export default function Home() {
                 <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Hoe werkt het
                 </a>
+                <a href="#persoonlijk-biedadvies" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Persoonlijk biedadvies
+                </a>
+                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Missie & visie
+                </a>
                 <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Waarom ons
+                  Waarom JuisteBod
                 </a>
                 <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Reviews
@@ -145,13 +162,41 @@ export default function Home() {
                   Contact
                 </a>
               </nav>
-              <button className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 transition-colors ml-4">
+              <button
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 transition-colors ml-4"
+                aria-label="Menu"
+              >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
             </div>
           </div>
+          {isMenuOpen && (
+            <nav className="md:hidden mt-4 border-t border-gray-200 pt-4">
+              <div className="flex flex-col space-y-3 text-center">
+                <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Hoe werkt het
+                </a>
+                <a href="#persoonlijk-biedadvies" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Persoonlijk biedadvies
+                </a>
+                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Missie & visie
+                </a>
+                <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Waarom JuisteBod
+                </a>
+                <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Reviews
+                </a>
+                <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Contact
+                </a>
+              </div>
+            </nav>
+          )}
         </div>
       </motion.header>
 
@@ -208,6 +253,24 @@ export default function Home() {
             <PropertyForm onPropertyFound={handlePropertyFound} />
           </motion.div>
         </div>
+
+        <a
+          href="#hoe-werkt-het"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/90 hover:text-white transition-colors"
+          aria-label="Scroll naar beneden"
+        >
+          <span className="text-xs uppercase tracking-[0.2em]">Scroll</span>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            className="flex flex-col items-center"
+          >
+            <span className="block h-8 w-px bg-white/70 mb-2"></span>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </motion.div>
+        </a>
       </section>
 
       {/* Property Results Section */}
@@ -221,34 +284,22 @@ export default function Home() {
               transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                Woning Gegevens
+                Woning Overzicht
               </h2>
               
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Property Details */}
                 <div>
-                  <h3 className="text-xl font-semibold mb-4" style={{ color: '#7C8471' }}>
-                    {propertyData.title}
-                  </h3>
+                  {propertyData.title &&
+                    propertyData.title.trim() !== propertyData.address?.trim() && (
+                      <h3 className="text-xl font-semibold mb-4" style={{ color: '#7C8471' }}>
+                        {propertyData.title}
+                      </h3>
+                    )}
                   <div className="space-y-3">
                     <p className="text-gray-800">
                       <strong>Adres:</strong> {normalizeAddress(propertyData.address) || 'Vul adres aan'}
                     </p>
-                    {propertyData.price && (
-                      <p className="text-gray-800"><strong>Prijs:</strong> {propertyData.price}</p>
-                    )}
-                    {propertyData.propertyType && (
-                      <p className="text-gray-800"><strong>Type:</strong> {propertyData.propertyType}</p>
-                    )}
-                    {propertyData.surface && (
-                      <p className="text-gray-800"><strong>Oppervlakte:</strong> {propertyData.surface}</p>
-                    )}
-                    {propertyData.rooms && (
-                      <p className="text-gray-800"><strong>Kamers:</strong> {propertyData.rooms}</p>
-                    )}
-                    {propertyData.yearBuilt && (
-                      <p className="text-gray-800"><strong>Bouwjaar:</strong> {propertyData.yearBuilt}</p>
-                    )}
                   </div>
                 </div>
 
@@ -260,28 +311,6 @@ export default function Home() {
                   />
                 </div>
               </div>
-
-              {/* Property Image (if available) */}
-              {propertyData.images && propertyData.images.length > 0 && (
-                <div className="mt-8">
-                  <h4 className="text-lg font-semibold mb-4 text-gray-800">Foto's</h4>
-                  <img 
-                    src={propertyData.images[0]} 
-                    alt="Property" 
-                    className="w-full max-w-2xl h-64 object-cover rounded-lg"
-                  />
-                </div>
-              )}
-
-              {/* Description */}
-              {propertyData.description && (
-                <div className="mt-8">
-                  <h4 className="text-lg font-semibold mb-4 text-gray-800">Omschrijving</h4>
-                  <p className="text-gray-800 leading-relaxed">
-                    {propertyData.description}
-                  </p>
-                </div>
-              )}
 
               {/* Data Confirmation Section */}
               <div className="mt-8 p-6 rounded-lg border-2 border-gray-200">
@@ -333,39 +362,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* Trust Section */}
-      <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-end">
-            {/* Weegschaal - neemt 5 kolommen links */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-start h-full self-end">
-              <AnimatedWeegschaal 
-                animationType="slideFromLeft"
-                size={500}
-                showOnView={true}
-                showRefreshButton={true}
-              />
-            </div>
-
-            {/* Text Content - neemt 7 kolommen rechts */}
-            <motion.div 
-              className="lg:col-span-7 text-gray-800 space-y-6 flex flex-col justify-end min-h-[400px]"
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8 }}
-            >
-              <p className="text-lg leading-relaxed">
-                Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning zonder dat daar hoge makelaarskosten bij komen kijken.
-              </p>
-              <p className="text-lg leading-relaxed">
-                Onze missie is om woningzoekers snel, helder en betaalbaar te helpen bij het bepalen van een bod. Zodat je met vertrouwen en kennis van de markt je volgende stap kan zetten!
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* How It Works Section */}
       <section id="hoe-werkt-het" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto text-center">
@@ -398,7 +394,7 @@ transition={{ duration: 0.6 }}>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-gray-800">Vul je adres in</h3>
               <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                Vul postcode en huisnummer in om de locatie te vinden. De Funda-link is optioneel.
+                Vul postcode en huisnummer in om de locatie te vinden. Funda-link is verplicht voor het bodadvies.
               </p>
               <div className="text-xs text-gray-500 bg-white rounded-lg p-3 mx-auto max-w-xs min-h-[56px] flex items-center justify-center mt-auto">
                 💡 <strong>Tip:</strong> Funda-link helpt bij persoonlijk advies
@@ -474,15 +470,158 @@ transition={{ duration: 0.6 }}>
             
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-lg font-semibold" style={{ color: '#1F3C88' }}>
-                ✅ Alles voor slechts €49 - Geen verborgen kosten
+                Alles voor slechts €49 - Geen verborgen kosten
               </p>
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* Persoonlijk Biedadvies Section */}
+      <section id="persoonlijk-biedadvies" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            viewport={{ once: true, margin: "-100px" }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-800">
+              Persoonlijk biedadvies
+            </h2>
+            <p className="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
+              Bij Juiste bod krijg je persoonlijk biedadvies van een ervaren vastgoedprofesional. 
+              Geen algoritme, maar menselijk inzicht. Op basis van kennis van de markt, 
+              vergelijkbare woningen én strategieën die echt werken.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="prose prose-lg max-w-none text-gray-700 space-y-6 mb-12"
+            viewport={{ once: true, margin: "-100px" }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="text-lg leading-relaxed text-center">
+              Ontvang binnen 24 uur een onderbouwd advies dat je helpt slim te bieden zonder 
+              honderden euro's uit te geven aan een aankoopmakelaar. 
+              Geen gok, geen koude data. Gewoon het juiste bod.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="bg-white rounded-xl p-8 shadow-lg"
+            viewport={{ once: true, margin: "-100px" }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h3 className="text-2xl font-bold mb-8 text-center text-gray-800">
+              Wat je krijgt met persoonlijk advies van JuisteBod.nl:
+            </h3>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Menselijk inzicht</h4>
+                    <p className="text-gray-600">Geen AI, maar advies van een vastgoedprofessional</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Afgestemd op jouw woning</h4>
+                    <p className="text-gray-600">We kijken naar afwerking, ligging, populariteit van de buurt en meer</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Slimme biedstrategie</h4>
+                    <p className="text-gray-600">Niet alleen wat je moet bieden, maar ook hoe je het aanpakt</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Snelle levering</h4>
+                    <p className="text-gray-600">Binnen 24 uur jouw persoonlijke biedadvies in je mailbox</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Betaalbaar</h4>
+                    <p className="text-gray-600">Slechts €49,95 in plaats van duizenden euro's voor een aankoopmakelaar</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Onafhankelijk advies</h4>
+                    <p className="text-gray-600">Geen verkooppraatjes, geen belangen, alleen eerlijke informatie</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <span className="text-gray-400 font-bold text-lg">•</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Meer kans op succes</h4>
+                    <p className="text-gray-600">Vergroot je kans om niet alleen een bod te doen, maar ook te winnen</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Missie & Visie Section */}
+      <section id="missie-visie" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-end">
+            {/* Weegschaal - neemt 5 kolommen links */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-start h-full self-end">
+              <AnimatedWeegschaal 
+                animationType="slideFromLeft"
+                size={500}
+                showOnView={true}
+                showRefreshButton={false}
+              />
+            </div>
+
+            {/* Text Content - neemt 7 kolommen rechts */}
+            <motion.div 
+              className="lg:col-span-7 text-gray-800 space-y-6 flex flex-col justify-start min-h-[400px]"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+            >
+              <p className="text-lg leading-relaxed">
+                Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning zonder dat daar hoge makelaarskosten bij komen kijken.
+              </p>
+              <p className="text-lg leading-relaxed">
+                Onze missie is om woningzoekers snel, helder en betaalbaar te helpen bij het bepalen van een bod. Zodat je met vertrouwen en kennis van de markt je volgende stap kan zetten!
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Why JuisteBod Section */}
-      <section id="waarom-juistebod" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
+      <section id="waarom-juistebod" className="py-12 px-6" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-4xl mx-auto">
           <motion.div 
             className="text-center"
@@ -556,116 +695,6 @@ transition={{ duration: 0.6 }}
                 </p>
               </div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Why Choose JuisteBod Section */}
-      <section className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-whileInView={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-800">
-              Persoonlijk biedadvies
-            </h2>
-            <p className="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
-              Bij Juiste bod krijg je persoonlijk biedadvies van een ervaren vastgoedprofesional. 
-              Geen algoritme, maar menselijk inzicht. Op basis van kennis van de markt, 
-              vergelijkbare woningen én strategieën die echt werken.
-            </p>
-          </motion.div>
-
-          <motion.div 
-            className="prose prose-lg max-w-none text-gray-700 space-y-6 mb-12"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-whileInView={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}
-          >
-            <p className="text-lg leading-relaxed text-center">
-              Ontvang binnen 24 uur een onderbouwd advies dat je helpt slim te bieden zonder 
-              honderden euro's uit te geven aan een aankoopmakelaar. 
-              Geen gok, geen koude data. Gewoon het juiste bod.
-            </p>
-          </motion.div>
-
-          <motion.div 
-            className="bg-white rounded-xl p-8 shadow-lg"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, scale: 0.8 }}
-whileInView={{ opacity: 1, scale: 1 }}
-transition={{ duration: 0.6 }}
-          >
-            <h3 className="text-2xl font-bold mb-8 text-center text-gray-800">
-              Wat je krijgt met persoonlijk advies van JuisteBod.nl:
-            </h3>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Menselijk inzicht</h4>
-                    <p className="text-gray-600">Geen AI, maar advies van een vastgoedprofessional</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Afgestemd op jouw woning</h4>
-                    <p className="text-gray-600">We kijken naar afwerking, ligging, populariteit van de buurt en meer</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Slimme biedstrategie</h4>
-                    <p className="text-gray-600">Niet alleen wat je moet bieden, maar ook hoe je het aanpakt</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Snelle levering</h4>
-                    <p className="text-gray-600">Binnen 24 uur jouw persoonlijke biedadvies in je mailbox</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Betaalbaar</h4>
-                    <p className="text-gray-600">Slechts €49,95 in plaats van duizenden euro's voor een aankoopmakelaar</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Onafhankelijk advies</h4>
-                    <p className="text-gray-600">Geen verkooppraatjes, geen belangen, alleen eerlijke informatie</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 font-bold text-lg">✅</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">Meer kans op succes</h4>
-                    <p className="text-gray-600">Vergroot je kans om niet alleen een bod te doen, maar ook te winnen</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -760,9 +789,6 @@ transition={{ duration: 0.6 }}>
               <p className="text-lg text-gray-800 mb-2">
                 Netraam Kremer
               </p>
-              <p className="text-lg text-gray-600 mb-2">
-                Telefoon: 06-12345678
-              </p>
               <p className="text-lg text-gray-600">
                 Email: info@juistebod.nl
               </p>
@@ -802,6 +828,9 @@ transition={{ duration: 0.6 }}>
                 </svg>
               </a>
             </div>
+            <p className="text-sm text-gray-600 mt-6">
+              KvK: 97900443
+            </p>
           </div>
         </div>
       </footer>

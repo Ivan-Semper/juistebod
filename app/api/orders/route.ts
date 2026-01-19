@@ -12,12 +12,6 @@ export async function POST(request: NextRequest) {
       lastName, 
       email,
       phone,
-      gender,
-      age,
-      currentSituation,
-      budgetRange,
-      firstTimeBuyer,
-      urgency,
       additionalInfo,
       propertyUrl,
       propertyAddress,
@@ -26,7 +20,7 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Validate required fields
-    if (!firstName || !lastName || !email || !propertyUrl || !propertyData) {
+    if (!firstName || !lastName || !email || !phone || !propertyUrl || !propertyData) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -38,17 +32,12 @@ export async function POST(request: NextRequest) {
       email,
       firstName,
       lastName,
-      gender,
+      phone,
       propertyUrl,
       propertyData: {
         ...propertyData,
         customerInfo: {
           phone,
-          age,
-          currentSituation,
-          budgetRange,
-          firstTimeBuyer,
-          urgency,
           additionalInfo
         }
       },

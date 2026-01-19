@@ -45,7 +45,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - Ga naar Supabase Dashboard > Settings > API
 - Kopieer de waarden van daar
 
-## Stap 5: Test de database connectie
+## Stap 5: Test de database connectie (lokaal én productie)
 
 1. **Herstart je development server** (belangrijk!)
    ```bash
@@ -53,11 +53,25 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    npm run dev
    ```
 
-2. Test de connectie:
+2. Test lokaal:
    - Open: `http://localhost:3000/api/test-connections`
    - Of run: `node test-db.js`
 
-## Stap 6: Verifieer dat de tabellen bestaan
+3. Test in productie:
+   - In productie zijn test-routes uitgeschakeld.
+   - Gebruik de SQL check in Stap 6 om te verifiëren dat de tabellen bestaan.
+
+## Stap 6: Zet je Supabase keys in Vercel (productie)
+
+1. Ga naar Vercel → Project → **Settings** → **Environment Variables**
+2. Voeg toe (Production):
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+3. Klik op **Save**
+4. **Redeploy** je project zodat de env vars actief worden
+
+## Stap 7: Verifieer dat de tabellen bestaan
 
 In Supabase SQL Editor, run deze query:
 

@@ -31,18 +31,41 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
       return;
     }
 
-    if (fundaUrl && !validateFundaUrl(fundaUrl)) {
-      setValidationError('Voer een geldige Funda woninglink in (optioneel veld)');
+    if (!fundaUrl) {
+      setValidationError('Funda link is verplicht');
+      return;
+    }
+
+    if (!validateFundaUrl(fundaUrl)) {
+      setValidationError('Voer een geldige Funda woninglink in');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const address = `${postcode} ${houseNumber}`;
+      const fallbackAddress = `${postcode} ${houseNumber}`;
+      let resolvedAddress = fallbackAddress;
+
+      try {
+        const response = await fetch('/api/geocode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ postcode, houseNumber })
+        });
+        const data = await response.json();
+        if (response.ok && data?.success && data.formattedAddress) {
+          resolvedAddress = data.formattedAddress;
+        }
+      } catch {
+        // Fallback to postcode + huisnummer
+      }
+
       const propertyData = {
-        url: fundaUrl || 'Manual entry',
-        title: `Woning in ${postcode}`,
-        address,
+        url: fundaUrl,
+        title: resolvedAddress,
+        address: resolvedAddress,
         price: '',
         location: '',
         propertyType: '',
@@ -69,21 +92,15 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div className="text-center">
-        <h3 className="text-xl font-semibold text-white mb-2">
-          Vul je woninggegevens in
-        </h3>
-        <p className="text-base text-white/90 mb-6">
-          We hebben alleen postcode en huisnummer nodig om de locatie te vinden.
-        </p>
         {!showFields && (
           <motion.button
             type="button"
             onClick={() => setShowFields(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/40 bg-white/10 text-white/90 hover:text-white hover:bg-white/20 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-[#1F3C88] font-semibold shadow-md hover:bg-white/90 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Gegevens invullen
+            Start aanvraag
             <span className="text-lg leading-none">→</span>
           </motion.button>
         )}
@@ -134,7 +151,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Funda link (optioneel)
+                  Funda link <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="url"
@@ -143,6 +160,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Plak hier je Funda woninglink"
+                  required
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   We gebruiken de link om een zo goed mogelijk bodadvies voor je te maken.

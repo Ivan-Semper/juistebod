@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       },
       description: description,
       redirectUrl: redirectUrl,
-      // webhookUrl: process.env.MOLLIE_WEBHOOK_URL, // Uitgeschakeld voor development
+      webhookUrl: process.env.MOLLIE_WEBHOOK_URL || undefined,
       metadata: {
         orderId: orderId
       }

@@ -32,12 +32,6 @@ export default function CheckoutPage() {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        gender: formData.gender,
-        age: formData.age,
-        currentSituation: formData.currentSituation,
-        budgetRange: formData.budgetRange,
-        firstTimeBuyer: formData.firstTimeBuyer,
-        urgency: formData.urgency,
         additionalInfo: formData.additionalInfo,
         propertyUrl: propertyData?.url || '',
         propertyAddress: propertyData?.address || '',
@@ -119,47 +113,18 @@ export default function CheckoutPage() {
               </h2>
               
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold" style={{ color: '#7C8471' }}>
-                  {propertyData.title}
-                </h3>
+                {propertyData.title &&
+                  propertyData.title.trim() !== propertyData.address?.trim() && (
+                    <h3 className="text-xl font-semibold" style={{ color: '#7C8471' }}>
+                      {propertyData.title}
+                    </h3>
+                  )}
                 
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-800 font-medium">Adres</p>
-                    <p className="text-gray-900">{propertyData.address}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-800 font-medium">Prijs</p>
-                    <p className="text-gray-900 font-semibold">{propertyData.price}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-800 font-medium">Type</p>
-                    <p className="text-gray-900">{propertyData.propertyType}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-800 font-medium">Oppervlakte</p>
-                    <p className="text-gray-900">{propertyData.surface}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-800 font-medium">Kamers</p>
-                    <p className="text-gray-900">{propertyData.rooms}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-800 font-medium">Bouwjaar</p>
-                    <p className="text-gray-900">{propertyData.yearBuilt}</p>
-                  </div>
+                <div>
+                  <p className="text-lg font-semibold" style={{ color: '#7C8471' }}>
+                    {propertyData.address}
+                  </p>
                 </div>
-
-                {/* Property Image */}
-                {propertyData.images.length > 0 && (
-                  <div className="mt-6">
-                    <img 
-                      src={propertyData.images[0]} 
-                      alt="Property" 
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
 
                 <div className="mt-6 p-4 bg-gray-50/20 rounded-lg">
                   <h4 className="font-semibold text-gray-800 mb-2">Wat krijg je?</h4>

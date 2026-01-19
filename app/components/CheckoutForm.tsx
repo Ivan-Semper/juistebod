@@ -12,13 +12,7 @@ interface FormData {
   firstName: string;
   lastName: string;
   email: string;
-  confirmEmail: string;
   phone: string;
-  gender: string;
-  age: string;
-  currentSituation: string;
-  budgetRange: string;
-  firstTimeBuyer: string;
   additionalInfo: string;
 }
 
@@ -27,13 +21,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
     firstName: '',
     lastName: '',
     email: '',
-    confirmEmail: '',
     phone: '',
-    gender: '',
-    age: '',
-    currentSituation: '',
-    budgetRange: '',
-    firstTimeBuyer: '',
     additionalInfo: ''
   });
 
@@ -61,10 +49,8 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       newErrors.email = 'Voer een geldig email adres in';
     }
 
-    if (!formData.confirmEmail.trim()) {
-      newErrors.confirmEmail = 'Bevestig je emailadres';
-    } else if (formData.email !== formData.confirmEmail) {
-      newErrors.confirmEmail = 'Emailadressen komen niet overeen';
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Telefoonnummer is verplicht';
     }
 
     setErrors(newErrors);
@@ -185,151 +171,27 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-900 mb-2">
-          Bevestig emailadres *
-        </label>
-        <input
-          type="email"
-          name="confirmEmail"
-          value={formData.confirmEmail}
-          onChange={handleChange}
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
-            errors.confirmEmail ? 'border-red-500' : 'border-gray-400'
-          }`}
-          placeholder="Herhaal je emailadres"
-        />
-        {errors.confirmEmail && (
-          <p className="mt-1 text-sm text-red-600">{errors.confirmEmail}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-900 mb-2">
-          Telefoonnummer <span className="text-green-600">(aanbevolen)</span>
+          Telefoonnummer *
         </label>
         <input
           type="tel"
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900"
+          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
+            errors.phone ? 'border-red-500' : 'border-gray-400'
+          }`}
           placeholder="06 12345678"
+          required
         />
-        <p className="mt-1 text-sm text-gray-700">
-          Voor snelle communicatie indien nodig
-        </p>
+        {errors.phone && (
+          <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+        )}
       </div>
-
-      {/* Demographics for Analysis */}
-      <div className="pt-4 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Aanvullende informatie
-          <span className="text-sm font-normal text-gray-700 ml-2">
-            (helpt ons bij het opstellen van gepersonaliseerd advies)
-          </span>
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Geslacht
-            </label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            >
-              <option value="">Selecteer...</option>
-              <option value="man">Man</option>
-              <option value="vrouw">Vrouw</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Leeftijd
-            </label>
-            <select
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            >
-              <option value="">Selecteer...</option>
-              <option value="18-25">18-25 jaar</option>
-              <option value="26-35">26-35 jaar</option>
-              <option value="36-45">36-45 jaar</option>
-              <option value="46-55">46-55 jaar</option>
-              <option value="56-65">56-65 jaar</option>
-              <option value="65+">65+ jaar</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Huidige woonsituatie
-            </label>
-            <select
-              name="currentSituation"
-              value={formData.currentSituation}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            >
-              <option value="">Selecteer...</option>
-              <option value="huur">Huur</option>
-              <option value="eigen_woning">Eigen woning</option>
-              <option value="bij_ouders">Bij ouders/familie</option>
-              <option value="anders">Anders</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Budget range
-            </label>
-            <select
-              name="budgetRange"
-              value={formData.budgetRange}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            >
-              <option value="">Selecteer...</option>
-              <option value="tot_300k">Tot €300.000</option>
-              <option value="300k_500k">€300.000 - €500.000</option>
-              <option value="500k_750k">€500.000 - €750.000</option>
-              <option value="750k_1m">€750.000 - €1.000.000</option>
-              <option value="1m_plus">€1.000.000+</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Eerste keer kopen?
-            </label>
-            <select
-              name="firstTimeBuyer"
-              value={formData.firstTimeBuyer}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            >
-              <option value="">Selecteer...</option>
-              <option value="ja">Ja, eerste keer</option>
-              <option value="nee">Nee, niet eerste keer</option>
-            </select>
-          </div>
-
-          {/* Removed urgency field */}
-        </div>
-      </div>
-
       {/* Additional Information */}
       <div>
         <label className="block text-sm font-medium text-gray-900 mb-2">
-          Aanvullende informatie
+          Aanvullende informatie (optioneel)
         </label>
         <textarea
           name="additionalInfo"

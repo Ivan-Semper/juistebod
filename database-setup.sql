@@ -21,13 +21,13 @@ CREATE TABLE IF NOT EXISTS orders (
   email TEXT NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  gender TEXT,
+  phone TEXT NOT NULL,
   property_url TEXT NOT NULL,
   property_data JSONB NOT NULL,
   payment_status TEXT NOT NULL DEFAULT 'pending',
   order_status TEXT NOT NULL DEFAULT 'new',
   payment_id TEXT,
-  amount_paid DECIMAL(10, 2),
+  amount_paid DECIMAL(10, 2) DEFAULT 49.95,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
