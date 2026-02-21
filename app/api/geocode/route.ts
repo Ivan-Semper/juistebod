@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const addressQuery = `${postcode} ${houseNumber}`;
+    const addressQuery = `${postcode} ${houseNumber}, Nederland`;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       addressQuery
     )}&key=${apiKey}&language=nl&region=nl`;
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         components.find((c: any) => c.types?.includes(type))?.long_name || '';
 
       const street = get('route');
-      const number = get('street_number');
+      const number = get('street_number') || houseNumber;
       const postal = get('postal_code') || postcode;
       const city = get('locality') || get('postal_town') || get('administrative_area_level_2');
 
@@ -43,7 +43,11 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        formattedAddress: formattedAddress || data.results[0].formatted_address
+        formattedAddress: formattedAddress || data.results[0].formatted_address,
+        street,
+        houseNumber: number,
+        postcode: postal,
+        city
       });
     }
 

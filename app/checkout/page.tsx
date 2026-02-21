@@ -11,6 +11,7 @@ export default function CheckoutPage() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [showPayment, setShowPayment] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
   }, [router]);
 
   const handleFormSubmit = async (formData: any) => {
+    setSubmitError(null);
     try {
       // Prepare the data for the API
       const orderData = {
@@ -57,11 +59,11 @@ export default function CheckoutPage() {
         
         // Order created; show payment section
       } else {
-        throw new Error(result.error || 'Failed to create order');
+        throw new Error(result.message || result.error || 'Failed to create order');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      // Keep UX clean; errors are logged and can be surfaced inline if needed
+      setSubmitError(error instanceof Error ? error.message : 'Er is iets misgegaan. Probeer het opnieuw.');
     }
   };
 
@@ -142,6 +144,12 @@ export default function CheckoutPage() {
               <h2 className="text-2xl font-bold mb-6 text-gray-800">
                 Jouw Gegevens
               </h2>
+
+              {submitError && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-700 text-sm">{submitError}</p>
+                </div>
+              )}
               
               {!showPayment ? (
                 <CheckoutForm 
@@ -161,7 +169,7 @@ export default function CheckoutPage() {
                   
                   <PaymentButton
                     orderId={orderId!}
-                    amount={49.95}
+                    amount={60.44}
                     description="Persoonlijk Bodadvies - JuisteBod"
                     onPaymentSuccess={() => {
                       router.push('/');

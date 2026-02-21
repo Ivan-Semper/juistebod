@@ -62,6 +62,11 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
         // Fallback to postcode + huisnummer
       }
 
+      // Ensure house number is always in the address
+      if (!resolvedAddress.includes(houseNumber)) {
+        resolvedAddress = `${resolvedAddress} ${houseNumber}`.trim();
+      }
+
       const propertyData = {
         url: fundaUrl,
         title: resolvedAddress,

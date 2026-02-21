@@ -23,7 +23,7 @@ export class DatabaseService {
         property_data: data.propertyData,
         payment_status: 'pending',
         order_status: 'new',
-        amount_paid: data.amount || 49.95
+        amount_paid: data.amount || 60.44
       }
 
       const { data: order, error } = await supabaseAdmin

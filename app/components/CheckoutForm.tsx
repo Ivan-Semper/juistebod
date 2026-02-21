@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, Fragment, useRef } from 'react';
 import { PropertyData } from '@/lib/types/PropertyTypes';
+import { useContent } from '@/lib/hooks/useContent';
 
 interface CheckoutFormProps {
   propertyData: PropertyData;
@@ -31,6 +32,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [termsError, setTermsError] = useState('');
   const termsRef = useRef<HTMLDivElement>(null);
+  const c = useContent();
 
   const validateForm = (): boolean => {
     const newErrors: Partial<FormData> = {};
@@ -262,13 +264,19 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
 
       {/* Pricing Information */}
       <div className="bg-gray-50/20 backdrop-blur-sm p-6 rounded-lg">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-semibold text-gray-800">
             Professioneel Bodadvies
           </span>
-          <span className="text-2xl font-bold" style={{ color: '#1F3C88' }}>
-            €49
-          </span>
+          <div className="text-right">
+            <span className="text-sm line-through text-gray-400 mr-2">€{c('price_old', '75')}</span>
+            <span className="text-lg font-semibold" style={{ color: '#1F3C88' }}>€{c('price_excl_btw', '49,95')}</span>
+            <span className="text-xs text-gray-500 block">excl. BTW</span>
+          </div>
+        </div>
+        <div className="flex justify-between items-center mb-4 pt-2 border-t border-gray-200">
+          <span className="text-sm font-medium text-gray-700">Totaal incl. BTW (21%)</span>
+          <span className="text-2xl font-bold" style={{ color: '#1F3C88' }}>€{c('price_incl_btw', '60,44')}</span>
         </div>
         <p className="text-sm text-gray-800 mb-4">
           Binnen 24 uur ontvangt u een uitgebreid rapport met marktanalyse, bodadvies en onderhandelingsstrategie.
@@ -294,12 +302,12 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
             Verwerken...
           </div>
         ) : (
-          'Betaal €49 en ontvang advies'
+          `Betaal €${c('price_incl_btw', '60,44')} en ontvang advies`
         )}
       </button>
 
       <p className="text-xs text-gray-700 text-center mt-4">
-        Door op 'Betaal €49 en ontvang advies' te klikken, ga je akkoord met onze <span className="font-semibold">algemene voorwaarden</span> (max. 24 uur op werkdagen, niet in het weekend) en <a href="/privacy" className="text-blue-600 hover:underline">privacybeleid</a>.
+        Door op &apos;Betaal €{c('price_incl_btw', '60,44')} en ontvang advies&apos; te klikken, ga je akkoord met onze <span className="font-semibold">algemene voorwaarden</span> (max. 24 uur op werkdagen, niet in het weekend) en <a href="/privacy" className="text-blue-600 hover:underline">privacybeleid</a>.
       </p>
     </form>
   );

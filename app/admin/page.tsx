@@ -1,137 +1,104 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function AdminPage() {
-  const [orderId, setOrderId] = useState('');
-  const [paymentStatus, setPaymentStatus] = useState('paid');
-  const [paymentId, setPaymentId] = useState('');
-  const [amountPaid, setAmountPaid] = useState(29.95);
+export default function AdminLoginPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const router = useRouter();
 
-  const handleUpdatePayment = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
     setIsLoading(true);
-    setMessage('');
 
     try {
-      const response = await fetch('/api/admin/update-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          orderId,
-          paymentStatus,
-          paymentId,
-          amountPaid
-        }),
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setMessage('✅ Payment status updated successfully!');
-        setOrderId('');
-        setPaymentId('');
+        router.push("/admin/dashboard");
       } else {
-        setMessage(`❌ Error: ${data.error}`);
+        setError(data.error || "Login mislukt");
       }
-    } catch (error) {
-      setMessage('❌ Failed to update payment status');
+    } catch {
+      setError("Er is iets misgegaan. Probeer het opnieuw.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen p-8" style={{ backgroundColor: '#FAF9F6' }}>
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">
-          Admin - Update Payment Status
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: "#FAF9F6" }}
+    >
+      <div className="w-full max-w-sm">
+        <h1 className="text-2xl font-semibold text-center mb-8 text-gray-800">
+          JuisteBod Admin
         </h1>
-
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Order ID
-              </label>
-              <input
-                type="text"
-                value={orderId}
-                onChange={(e) => setOrderId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                placeholder="Enter order ID"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Payment Status
-              </label>
-              <select
-                value={paymentStatus}
-                onChange={(e) => setPaymentStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              >
-                <option value="paid">Paid</option>
-                <option value="pending">Pending</option>
-                <option value="failed">Failed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Payment ID (optional)
-              </label>
-              <input
-                type="text"
-                value={paymentId}
-                onChange={(e) => setPaymentId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                placeholder="Mollie payment ID"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Amount Paid
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={amountPaid}
-                onChange={(e) => setAmountPaid(parseFloat(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              />
-            </div>
-
-            <button
-              onClick={handleUpdatePayment}
-              disabled={isLoading || !orderId}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-lg shadow-md p-6 space-y-4"
+        >
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
-              {isLoading ? 'Updating...' : 'Update Payment Status'}
-            </button>
-
-            {message && (
-              <div className={`p-4 rounded-lg ${
-                message.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {message}
-              </div>
-            )}
+              Gebruikersnaam
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F3C88] text-gray-900"
+              placeholder="Gebruikersnaam"
+              required
+              autoComplete="username"
+            />
           </div>
-        </div>
-
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold text-yellow-800 mb-2">💡 Development Note</h3>
-          <p className="text-yellow-700 text-sm">
-            In development, webhooks don't work with localhost. Use this admin panel to manually update payment status after testing payments.
-          </p>
-        </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Wachtwoord
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F3C88] text-gray-900"
+              placeholder="Wachtwoord"
+              required
+              autoComplete="current-password"
+            />
+          </div>
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2.5 px-4 rounded-md font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            style={{ backgroundColor: "#1F3C88" }}
+          >
+            {isLoading ? "Bezig..." : "Inloggen"}
+          </button>
+        </form>
       </div>
     </div>
   );
