@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: DashboardIcon },
@@ -67,7 +67,26 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
   const isLoginPage = pathname === "/admin";
+
+  useEffect(() => {
+    if (isLoginPage) {
+      setAuthChecked(true);
+      return;
+    }
+    fetch("/api/admin/content", { method: "GET" })
+      .then((res) => {
+        if (res.status === 401) {
+          router.replace("/admin");
+        } else {
+          setIsAuthed(true);
+        }
+      })
+      .catch(() => router.replace("/admin"))
+      .finally(() => setAuthChecked(true));
+  }, [isLoginPage, pathname, router]);
 
   const handleLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -77,6 +96,14 @@ export default function AdminLayout({
 
   if (isLoginPage) {
     return <>{children}</>;
+  }
+
+  if (!authChecked || !isAuthed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FAF9F6" }}>
+        <div className="animate-spin h-8 w-8 border-2 border-gray-300 border-t-blue-600 rounded-full" />
+      </div>
+    );
   }
 
   return (

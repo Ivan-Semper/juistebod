@@ -15,7 +15,12 @@ const generateHeroImages = () => {
   // Alleen de afbeeldingen die echt bestaan in de landing_page_photos folder
   const imageFilenames = [
     'artists-eyes-tHV0jeh_Yd4-unsplash.jpg',
-    'anya-chernik-LXHbMXfFrhw-unsplash.jpg'
+    'anya-chernik-LXHbMXfFrhw-unsplash.jpg',
+    'jw-2_nt_J35jKE-unsplash.jpg',
+    'margaret-polinder-3DsMhQF9aB0-unsplash.jpg',
+    'margaret-polinder-NzCVjuMW6ww-unsplash.jpg',
+    'nick-G7nq4FIFo_M-unsplash.jpg',
+    'ries-bosch-jXHaV2nBYEE-unsplash.jpg'
   ];
 
   return imageFilenames.map((filename, index) => ({
