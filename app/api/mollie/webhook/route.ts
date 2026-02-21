@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/logger';
+import { EmailService } from '@/lib/services/EmailService';
 
 const mollieApiKey = process.env.MOLLIE_API_KEY || 'placeholder-mollie-key';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
@@ -20,7 +21,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Missing payment ID' }, { status: 400 });
     }
 
-    // Fetch the actual payment from Mollie to verify authenticity
     const payment = await mollieClient.payments.get(id);
 
     const orderId = (payment.metadata as any)?.orderId;
@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false }, { status: 400 });
     }
 
-    // Verify the order exists before updating
     const { data: existingOrder } = await supabase
       .from('orders')
       .select('id, payment_status')
@@ -57,6 +56,23 @@ export async function POST(request: NextRequest) {
     }
 
     logger.info('Webhook: order updated', { orderId, paymentId: id, status: payment.status });
+
+    // Send emails when payment is successful
+    if (payment.status === 'paid' && existingOrder.payment_status !== 'paid') {
+      const { data: fullOrder } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
+        .single();
+
+      if (fullOrder) {
+        // Fire and forget - don't let email failures block the webhook response
+        EmailService.sendPaymentEmails(fullOrder).catch((err) => {
+          logger.error('Webhook: email sending failed', { error: err, orderId });
+        });
+      }
+    }
+
     return NextResponse.json({ success: true });
 
   } catch (error) {
