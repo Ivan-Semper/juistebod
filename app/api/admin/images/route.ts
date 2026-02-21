@@ -5,6 +5,11 @@ import path from 'path'
 const IMAGE_PATHS: Record<string, string> = {
   hero_1: 'public/landing_page_photos/artists-eyes-tHV0jeh_Yd4-unsplash.jpg',
   hero_2: 'public/landing_page_photos/anya-chernik-LXHbMXfFrhw-unsplash.jpg',
+  hero_3: 'public/landing_page_photos/jw-2_nt_J35jKE-unsplash.jpg',
+  hero_4: 'public/landing_page_photos/margaret-polinder-3DsMhQF9aB0-unsplash.jpg',
+  hero_5: 'public/landing_page_photos/margaret-polinder-NzCVjuMW6ww-unsplash.jpg',
+  hero_6: 'public/landing_page_photos/nick-G7nq4FIFo_M-unsplash.jpg',
+  hero_7: 'public/landing_page_photos/ries-bosch-jXHaV2nBYEE-unsplash.jpg',
   logo_front: 'public/Juistebod logo voorkant.png',
   logo_top: 'public/Juiste bod logo boven.png',
   contact_photo: 'public/images/Netraam_foto.jpeg',
