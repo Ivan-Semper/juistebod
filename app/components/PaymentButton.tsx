@@ -13,7 +13,6 @@ export default function PaymentButton({
   orderId, 
   amount, 
   description, 
-  onPaymentSuccess 
 }: PaymentButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,19 +29,16 @@ export default function PaymentButton({
         },
         body: JSON.stringify({
           orderId,
-          amount,
           description,
-          redirectUrl: `${window.location.origin}/checkout/success?orderId=${orderId}`
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        // Redirect naar Mollie checkout
         window.location.href = data.checkoutUrl;
       } else {
-        setError('Betaling kon niet worden aangemaakt');
+        setError(data.error || 'Betaling kon niet worden aangemaakt');
       }
     } catch (err) {
       setError('Er is een fout opgetreden');

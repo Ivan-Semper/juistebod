@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS orders (
   payment_status TEXT NOT NULL DEFAULT 'pending',
   order_status TEXT NOT NULL DEFAULT 'new',
   payment_id TEXT,
-  amount_paid DECIMAL(10, 2) DEFAULT 49.95,
+  amount_paid DECIMAL(10, 2) DEFAULT 60.44,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

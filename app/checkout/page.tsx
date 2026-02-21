@@ -172,7 +172,7 @@ export default function CheckoutPage() {
                     amount={60.44}
                     description="Persoonlijk Bodadvies - JuisteBod"
                     onPaymentSuccess={() => {
-                      router.push('/');
+                      router.push(`/checkout/success?orderId=${orderId}`);
                     }}
                   />
                   

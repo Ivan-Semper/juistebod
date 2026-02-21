@@ -33,7 +33,9 @@ const heroImages = generateHeroImages();
 
 export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(() =>
+    Math.floor(Math.random() * heroImages.length)
+  );
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
