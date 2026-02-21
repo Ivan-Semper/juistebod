@@ -13,19 +13,19 @@ import { useContent } from "@/lib/hooks/useContent";
 // Hero carousel images - automatisch gegenereerd uit folder
 const generateHeroImages = () => {
   // Alleen de afbeeldingen die echt bestaan in de landing_page_photos folder
-  const imageFilenames = [
-    'artists-eyes-tHV0jeh_Yd4-unsplash.jpg',
-    'anya-chernik-LXHbMXfFrhw-unsplash.jpg',
-    'jw-2_nt_J35jKE-unsplash.jpg',
-    'margaret-polinder-3DsMhQF9aB0-unsplash.jpg',
-    'margaret-polinder-NzCVjuMW6ww-unsplash.jpg',
-    'nick-G7nq4FIFo_M-unsplash.jpg',
-    'ries-bosch-jXHaV2nBYEE-unsplash.jpg'
+  const images = [
+    { file: 'artists-eyes-tHV0jeh_Yd4-unsplash.jpg', alt: 'Sfeervolle Nederlandse woning met karakter' },
+    { file: 'anya-chernik-LXHbMXfFrhw-unsplash.jpg', alt: 'Moderne woning in een groene woonwijk' },
+    { file: 'jw-2_nt_J35jKE-unsplash.jpg', alt: 'Karakteristiek huis aan een rustige straat' },
+    { file: 'margaret-polinder-3DsMhQF9aB0-unsplash.jpg', alt: 'Sfeervol rijtjeshuis in een Nederlandse buurt' },
+    { file: 'margaret-polinder-NzCVjuMW6ww-unsplash.jpg', alt: 'Gezellig Nederlands woonhuis met tuin' },
+    { file: 'nick-G7nq4FIFo_M-unsplash.jpg', alt: 'Ruime eengezinswoning in een kindvriendelijke wijk' },
+    { file: 'ries-bosch-jXHaV2nBYEE-unsplash.jpg', alt: 'Klassieke Nederlandse woning met rode dakpannen' },
   ];
 
-  return imageFilenames.map((filename, index) => ({
-    src: `/landing_page_photos/${filename}`,
-    alt: `Beautiful property ${index + 1}`
+  return images.map(({ file, alt }) => ({
+    src: `/landing_page_photos/${file}`,
+    alt,
   }));
 };
 
