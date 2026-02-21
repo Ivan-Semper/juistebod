@@ -54,6 +54,12 @@ const MANAGED_IMAGES: ImageItem[] = [
     description: "Achtergrondafbeelding hero carousel",
   },
   {
+    id: "success_bg",
+    label: "Succes-pagina achtergrond",
+    currentSrc: "/landing_page_photos/margaret-polinder-NzCVjuMW6ww-unsplash.jpg",
+    description: "Achtergrondafbeelding op de betaling-geslaagd pagina",
+  },
+  {
     id: "logo_front",
     label: "Logo (navigatie)",
     currentSrc: "/Juistebod logo voorkant.png",

@@ -175,8 +175,6 @@ export default function GoogleMap({
         const addressVariations = [
           `${address}, Netherlands`,
           `${address}`,
-          `Koningin-Julianalaan 20, Leersum, Netherlands`,
-          `Leersum, Netherlands`
         ];
         
         const tryGeocode = (addressIndex: number = 0): void => {

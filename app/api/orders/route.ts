@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { DatabaseService } from '@/lib/services/DatabaseService'
 import { logger } from '@/lib/utils/logger'
 import { verifyToken, COOKIE_NAME } from '@/lib/admin/auth'
+import { rateLimit, getClientIP } from '@/lib/utils/rateLimit'
 
 async function isAdmin(request: NextRequest): Promise<boolean> {
   const token = request.cookies.get(COOKIE_NAME)?.value
@@ -11,6 +12,15 @@ async function isAdmin(request: NextRequest): Promise<boolean> {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIP(request)
+  const { allowed } = rateLimit(`orders:${ip}`, 10, 60_000)
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Te veel verzoeken. Probeer het later opnieuw.' },
+      { status: 429 }
+    )
+  }
+
   try {
     const body = await request.json()
     
@@ -29,6 +39,21 @@ export async function POST(request: NextRequest) {
     if (!firstName || !lastName || !email || !phone || !propertyUrl || !propertyData) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { success: false, error: 'Ongeldig email adres' },
+        { status: 400 }
+      )
+    }
+
+    if (firstName.length > 100 || lastName.length > 100 || email.length > 254 || phone.length > 20) {
+      return NextResponse.json(
+        { success: false, error: 'Input too long' },
         { status: 400 }
       )
     }

@@ -45,7 +45,7 @@ export default function OrdersPage() {
         setOrders(data.data);
       }
     } catch {
-      console.error("Failed to fetch orders");
+      // Silently fail - admin will see empty state
     } finally {
       setLoading(false);
     }

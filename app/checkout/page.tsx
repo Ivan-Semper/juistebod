@@ -62,7 +62,6 @@ export default function CheckoutPage() {
         throw new Error(result.message || result.error || 'Failed to create order');
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
       setSubmitError(error instanceof Error ? error.message : 'Er is iets misgegaan. Probeer het opnieuw.');
     }
   };

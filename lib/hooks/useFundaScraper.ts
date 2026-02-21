@@ -97,14 +97,6 @@ export function useFundaScraper(): UseFundaScraperReturn {
         setPropertyData(result.data);
         setErrorCode(null);
         
-        // Log success for debugging
-        console.log('✅ Property scraped successfully:', {
-          url: normalizedUrl,
-          duration: result.metadata?.duration,
-          attempts: result.metadata?.attempts,
-          requestId: result.metadata?.requestId,
-        });
-        
         return result.data;
       } else {
         const errorMessage = result.message || 'Geen woning data ontvangen';
@@ -114,16 +106,6 @@ export function useFundaScraper(): UseFundaScraperReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden';
       setError(errorMessage);
-      
-      // Log error for debugging
-      console.error('❌ Scraping error:', {
-        url: url,
-        error: errorMessage,
-        errorCode: errorCode,
-        metadata: metadata,
-        fullError: err,
-        errorStack: err instanceof Error ? err.stack : 'No stack trace'
-      });
       
       return null;
     } finally {

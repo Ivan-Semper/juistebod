@@ -86,8 +86,8 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       };
 
       await onSubmit(submissionData);
-    } catch (error) {
-      console.error('Form submission error:', error);
+    } catch {
+      // Error handled by parent component
     } finally {
       setIsSubmitting(false);
     }

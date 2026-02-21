@@ -10,6 +10,7 @@ const IMAGE_PATHS: Record<string, string> = {
   hero_5: 'public/landing_page_photos/margaret-polinder-NzCVjuMW6ww-unsplash.jpg',
   hero_6: 'public/landing_page_photos/nick-G7nq4FIFo_M-unsplash.jpg',
   hero_7: 'public/landing_page_photos/ries-bosch-jXHaV2nBYEE-unsplash.jpg',
+  success_bg: 'public/landing_page_photos/margaret-polinder-NzCVjuMW6ww-unsplash.jpg',
   logo_front: 'public/Juistebod logo voorkant.png',
   logo_top: 'public/Juiste bod logo boven.png',
   contact_photo: 'public/images/Netraam_foto.jpeg',

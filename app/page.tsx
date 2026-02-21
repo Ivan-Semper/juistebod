@@ -138,7 +138,7 @@ export default function Home() {
           <div className="flex items-center w-full">
             {/* Logo helemaal links, nooit kleiner */}
             <div className="flex-shrink-0">
-              <a href="#" className="cursor-pointer">
+              <a href="/" className="cursor-pointer">
                 <Image
                   src="/Juistebod logo voorkant.png"
                   alt="JuisteBod.nl Logo"
@@ -163,9 +163,6 @@ export default function Home() {
                 </a>
                 <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Waarom JuisteBod
-                </a>
-                <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Reviews
                 </a>
                 <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Contact
@@ -196,9 +193,6 @@ export default function Home() {
                 </a>
                 <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Waarom JuisteBod
-                </a>
-                <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Reviews
                 </a>
                 <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Contact
@@ -693,43 +687,6 @@ transition={{ duration: 0.6 }}
                 </p>
               </div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-6xl mx-auto">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-20 text-center text-gray-800"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-whileInView={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}
-          >
-            {c('testimonials_title', 'Tevreden klanten')}
-          </motion.h2>
-          
-          <motion.div 
-            className="grid md:grid-cols-3 gap-12"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0 }}
-whileInView={{ opacity: 1 }}
-transition={{ duration: 0.6, staggerChildren: 0.2 }}
-          >
-            {[1, 2, 3].map((i) => (
-              <motion.div key={i} className="text-center" initial={{ opacity: 0, y: 30 }}
-whileInView={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}>
-                <div className="text-6xl mb-6" style={{ color: '#7C8471' }}>&ldquo;</div>
-                <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                  {c(`testimonial_${i}_quote`, 'Vanwege de prijsontwikkeling van je product en dienst door huurverzwaringen van eigenaars heb ik zorgvuldig voor jullie dienstverlening gekozen. Daarom is feedback van anderen die voorheen ervaring hadden.')}
-                </p>
-                <div className="font-semibold text-gray-800 text-lg">
-                  {c(`testimonial_${i}_name`, ['Nathalie Louwers', 'Ellis Steenhuis', 'Lillian Frayers'][i - 1])}
-                </div>
-              </motion.div>
-            ))}
           </motion.div>
         </div>
       </section>

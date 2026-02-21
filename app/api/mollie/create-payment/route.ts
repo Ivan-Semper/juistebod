@@ -2,11 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 import { DatabaseService } from '@/lib/services/DatabaseService';
 import { logger } from '@/lib/utils/logger';
+import { rateLimit, getClientIP } from '@/lib/utils/rateLimit';
 
 const mollieApiKey = process.env.MOLLIE_API_KEY || 'placeholder-mollie-key';
 const mollieClient = createMollieClient({ apiKey: mollieApiKey });
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIP(request);
+  const { allowed } = rateLimit(`payment:${ip}`, 5, 60_000);
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Te veel verzoeken. Probeer het later opnieuw.' },
+      { status: 429 }
+    );
+  }
+
   try {
     const { orderId, description } = await request.json();
 

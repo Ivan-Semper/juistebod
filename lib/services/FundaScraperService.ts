@@ -13,8 +13,6 @@ export class FundaScraperService {
 
   async scrapeProperty(url: string): Promise<PropertyData | null> {
     try {
-      console.log(`🔍 Scraping Funda URL: ${url}`);
-      
       const response = await fetch(url, {
         headers: this.baseHeaders,
         method: 'GET',
@@ -44,11 +42,9 @@ export class FundaScraperService {
         scrapedAt: new Date().toISOString(),
       };
 
-      console.log('✅ Successfully scraped property data');
       return propertyData;
 
-    } catch (error) {
-      console.error('❌ Error scraping property:', error);
+    } catch {
       return null;
     }
   }
@@ -108,8 +104,8 @@ export class FundaScraperService {
         
         return `${formattedStreet}, ${formattedCity}`;
       }
-    } catch (error) {
-      console.warn('Could not extract address from URL:', error);
+    } catch {
+      // URL parsing failed
     }
     
     return null;

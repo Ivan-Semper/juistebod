@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/utils/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key';
@@ -10,7 +11,6 @@ export async function POST(request: NextRequest) {
   try {
     const { orderId, paymentStatus, paymentId, amountPaid } = await request.json();
 
-    // Update order in database
     const { error } = await supabase
       .from('orders')
       .update({
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       .eq('id', orderId);
 
     if (error) {
-      console.error('Database update error:', error);
+      logger.error('Database update error', { error: error.message });
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Update payment error:', error);
+    logger.error('Update payment error', { error });
     return NextResponse.json(
       { success: false, error: 'Failed to update payment status' },
       { status: 500 }
