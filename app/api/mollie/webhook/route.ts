@@ -66,10 +66,12 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (fullOrder) {
-        // Fire and forget - don't let email failures block the webhook response
-        EmailService.sendPaymentEmails(fullOrder).catch((err) => {
+        try {
+          await EmailService.sendPaymentEmails(fullOrder);
+          logger.info('Webhook: emails sent', { orderId });
+        } catch (err) {
           logger.error('Webhook: email sending failed', { error: err, orderId });
-        });
+        }
       }
     }
 
