@@ -35,7 +35,7 @@ export default function StructuredData() {
     },
     offers: {
       '@type': 'Offer',
-      price: '60.44',
+      price: '241.94',
       priceCurrency: 'EUR',
       priceValidUntil: '2026-12-31',
       availability: 'https://schema.org/InStock',

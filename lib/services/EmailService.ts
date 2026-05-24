@@ -52,7 +52,7 @@ export class EmailService {
                 <p style="margin:0 0 12px;font-size:14px;color:#888;">Woning</p>
                 <p style="margin:0 0 20px;font-size:15px;color:#333;">${address}</p>
                 <p style="margin:0 0 12px;font-size:14px;color:#888;">Betaald bedrag</p>
-                <p style="margin:0;font-size:15px;color:#1F3C88;font-weight:600;">&euro;${Number(order.amount_paid || 60.44).toFixed(2)} incl. BTW</p>
+                <p style="margin:0;font-size:15px;color:#1F3C88;font-weight:600;">&euro;${Number(order.amount_paid || 241.94).toFixed(2)} incl. BTW</p>
               </td></tr>
             </table>
           </td>
@@ -159,7 +159,7 @@ export class EmailService {
               <tr><td style="color:#888;width:140px;">Naam</td><td style="color:#333;font-weight:600;">${order.first_name} ${order.last_name}</td></tr>
               <tr><td style="color:#888;">Email</td><td style="color:#333;"><a href="mailto:${order.email}" style="color:#1F3C88;">${order.email}</a></td></tr>
               <tr><td style="color:#888;">Telefoon</td><td style="color:#333;"><a href="tel:${order.phone}" style="color:#1F3C88;">${order.phone || 'Niet opgegeven'}</a></td></tr>
-              <tr><td style="color:#888;">Betaald</td><td style="color:#1F3C88;font-weight:600;">&euro;${Number(order.amount_paid || 60.44).toFixed(2)}</td></tr>
+              <tr><td style="color:#888;">Betaald</td><td style="color:#1F3C88;font-weight:600;">&euro;${Number(order.amount_paid || 241.94).toFixed(2)}</td></tr>
             </table>
           </td>
         </tr>
@@ -218,5 +218,114 @@ export class EmailService {
       this.sendCustomerConfirmation(order),
       this.sendAdminNotification(order),
     ]);
+  }
+
+  static async sendVerificationCode(email: string, firstName: string, code: string): Promise<boolean> {
+    try {
+      const { error } = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        subject: `Jouw verificatiecode: ${code} — JuisteBod.nl`,
+        html: `
+<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background-color:#FAF9F6;font-family:Arial,Helvetica,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF9F6;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <tr>
+          <td style="background-color:#1F3C88;padding:28px 40px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">JuisteBod.nl</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:40px 40px 20px;text-align:center;">
+            <h2 style="color:#1F3C88;margin:0 0 8px;font-size:20px;">Bevestig je e-mailadres</h2>
+            <p style="color:#555;margin:0 0 32px;font-size:15px;">Hoi ${firstName}, gebruik de onderstaande code om door te gaan met je aanvraag.</p>
+            <div style="display:inline-block;background-color:#F0F4FF;border:2px solid #1F3C88;border-radius:12px;padding:20px 48px;">
+              <span style="font-size:40px;font-weight:700;letter-spacing:12px;color:#1F3C88;">${code}</span>
+            </div>
+            <p style="color:#888;font-size:13px;margin:24px 0 0;">Deze code is 15 minuten geldig.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 40px;background-color:#f8f9fa;text-align:center;border-top:1px solid #eee;">
+            <p style="margin:0;font-size:12px;color:#aaa;">Als je geen aanvraag hebt gedaan bij JuisteBod.nl, kun je deze e-mail negeren.</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`,
+      });
+
+      if (error) {
+        logger.error('Failed to send verification code email', { error, email });
+        return false;
+      }
+      return true;
+    } catch (error) {
+      logger.error('Error sending verification code email', { error, email });
+      return false;
+    }
+  }
+
+  static async sendAbandonedCartReminder(email: string): Promise<boolean> {
+    try {
+      const { error } = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        subject: 'Je bodadvies aanvraag wacht nog op je — JuisteBod.nl',
+        html: `
+<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background-color:#FAF9F6;font-family:Arial,Helvetica,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF9F6;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <tr>
+          <td style="background-color:#1F3C88;padding:28px 40px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">JuisteBod.nl</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:40px 40px 32px;text-align:center;">
+            <h2 style="color:#1F3C88;margin:0 0 16px;font-size:22px;">Je aanvraag is nog niet afgerond</h2>
+            <p style="color:#555;font-size:15px;line-height:1.6;margin:0 0 24px;">
+              Je was bezig met een bodadvies aanvraag op JuisteBod.nl. Wil je alsnog het juiste bod bepalen voor jouw droomwoning?
+            </p>
+            <p style="color:#555;font-size:15px;line-height:1.6;margin:0 0 32px;">
+              Onze ervaren makelaars staan klaar om binnen 48 uur een persoonlijk en onderbouwd advies op te stellen — voor slechts €199,95 excl. BTW.
+            </p>
+            <a href="https://www.juistebod.nl" style="display:inline-block;background-color:#1F3C88;color:#ffffff;font-size:16px;font-weight:600;padding:14px 36px;border-radius:50px;text-decoration:none;">
+              Ga verder met mijn aanvraag →
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 40px;background-color:#f8f9fa;text-align:center;border-top:1px solid #eee;">
+            <p style="margin:0;font-size:12px;color:#aaa;">JuisteBod.nl · Het juiste bod op elke woning · <a href="mailto:info@juistebod.nl" style="color:#888;">info@juistebod.nl</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`,
+      });
+
+      if (error) {
+        logger.error('Failed to send abandoned cart reminder', { error, email });
+        return false;
+      }
+      logger.info('Abandoned cart reminder sent', { email });
+      return true;
+    } catch (error) {
+      logger.error('Error sending abandoned cart reminder', { error, email });
+      return false;
+    }
   }
 }

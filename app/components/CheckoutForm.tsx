@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, Fragment, useRef } from 'react';
+import { useState, FormEvent, Fragment, useRef, useEffect } from 'react';
 import { PropertyData } from '@/lib/types/PropertyTypes';
 import { useContent } from '@/lib/hooks/useContent';
 
@@ -25,6 +25,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
     phone: '',
     additionalInfo: ''
   });
+  const [documents, setDocuments] = useState<File[]>([]);
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +34,24 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
   const [termsError, setTermsError] = useState('');
   const termsRef = useRef<HTMLDivElement>(null);
   const c = useContent();
+
+  // Pre-fill email from abandoned-cart capture in PropertyForm
+  useEffect(() => {
+    try {
+      const pendingEmail = localStorage.getItem('pendingEmail');
+      if (pendingEmail) {
+        setFormData(prev => ({ ...prev, email: pendingEmail }));
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
+
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setDocuments(Array.from(e.target.files));
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<FormData> = {};
@@ -82,6 +101,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
         propertyUrl: propertyData.url,
         propertyAddress: propertyData.address,
         propertyPrice: propertyData.price,
+        documentNames: documents.map((f) => f.name),
         submittedAt: new Date().toISOString()
       };
 
@@ -205,6 +225,42 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
         />
       </div>
 
+      {/* Document Upload */}
+      <div>
+        <label className="block text-sm font-medium text-gray-900 mb-2">
+          Documenten van de woning (optioneel)
+        </label>
+        <label className="flex items-center gap-3 px-4 py-3 border border-dashed border-gray-400 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-colors">
+          <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+          </svg>
+          <span className="text-sm text-gray-600">
+            {documents.length > 0
+              ? `${documents.length} bestand${documents.length > 1 ? 'en' : ''} geselecteerd`
+              : 'Taxatierapport, bouwtekeningen of andere bijlagen toevoegen'}
+          </span>
+          <input
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            onChange={handleDocumentChange}
+            className="hidden"
+          />
+        </label>
+        {documents.length > 0 && (
+          <ul className="mt-2 space-y-1">
+            {documents.map((f) => (
+              <li key={f.name} className="text-xs text-gray-500 flex items-center gap-1">
+                <span>📄</span> {f.name}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="text-xs text-gray-500 mt-1">
+          Ondersteunde formaten: PDF, Word, JPG, PNG
+        </p>
+      </div>
+
       {/* Algemene voorwaarden checkbox en link */}
       <div className="flex items-center mt-4">
         <input
@@ -269,14 +325,14 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
             Professioneel Bodadvies
           </span>
           <div className="text-right">
-            <span className="text-sm line-through text-gray-400 mr-2">€{c('price_old', '75')}</span>
-            <span className="text-lg font-semibold" style={{ color: '#1F3C88' }}>€{c('price_excl_btw', '49,95')}</span>
+            <span className="text-sm line-through text-gray-400 mr-2">€{c('price_old', '249,95')}</span>
+            <span className="text-lg font-semibold" style={{ color: '#1F3C88' }}>€{c('price_excl_btw', '199,95')}</span>
             <span className="text-xs text-gray-500 block">excl. BTW</span>
           </div>
         </div>
         <div className="flex justify-between items-center mb-4 pt-2 border-t border-gray-200">
           <span className="text-sm font-medium text-gray-700">Totaal incl. BTW (21%)</span>
-          <span className="text-2xl font-bold" style={{ color: '#1F3C88' }}>€{c('price_incl_btw', '60,44')}</span>
+          <span className="text-2xl font-bold" style={{ color: '#1F3C88' }}>€{c('price_incl_btw', '241,94')}</span>
         </div>
         <p className="text-sm text-gray-800 mb-4">
           Binnen 24 uur ontvangt u een uitgebreid rapport met marktanalyse, bodadvies en onderhandelingsstrategie.

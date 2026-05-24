@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, FormEvent } from 'react';
 import { validateFundaUrl } from '@/lib/utils/linkValidator';
@@ -9,13 +9,14 @@ interface PropertyFormProps {
 }
 
 export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
-  const [showFields, setShowFields] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [formData, setFormData] = useState({
     postcode: '',
     houseNumber: '',
-    fundaUrl: ''
+    fundaUrl: '',
+    email: '',
   });
 
   const handleSubmit = async (e: FormEvent) => {
@@ -25,6 +26,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
     const postcode = formData.postcode.replace(/\s+/g, '').toUpperCase();
     const houseNumber = formData.houseNumber.trim();
     const fundaUrl = formData.fundaUrl.trim();
+    const email = formData.email.trim();
 
     if (!postcode || !houseNumber) {
       setValidationError('Postcode en huisnummer zijn verplicht');
@@ -41,6 +43,20 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
       return;
     }
 
+    // Store email for abandoned cart reminder (if provided)
+    if (email && /\S+@\S+\.\S+/.test(email)) {
+      try {
+        localStorage.setItem('pendingEmail', email);
+      } catch {
+        // ignore
+      }
+      fetch('/api/pending-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }).catch(() => {/* ignore */});
+    }
+
     setIsSubmitting(true);
     try {
       const fallbackAddress = `${postcode} ${houseNumber}`;
@@ -49,10 +65,8 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
       try {
         const response = await fetch('/api/geocode', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ postcode, houseNumber })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ postcode, houseNumber }),
         });
         const data = await response.json();
         if (response.ok && data?.success && data.formattedAddress) {
@@ -62,7 +76,6 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
         // Fallback to postcode + huisnummer
       }
 
-      // Ensure house number is always in the address
       if (!resolvedAddress.includes(houseNumber)) {
         resolvedAddress = `${resolvedAddress} ${houseNumber}`.trim();
       }
@@ -81,6 +94,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
         description: '',
         features: [],
         scrapedAt: new Date().toISOString(),
+        pendingEmail: email || undefined,
       };
 
       onPropertyFound(propertyData);
@@ -97,10 +111,10 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div className="text-center">
-        {!showFields && (
+        {!showForm && (
           <motion.button
             type="button"
-            onClick={() => setShowFields(true)}
+            onClick={() => setShowForm(true)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-[#1F3C88] font-semibold shadow-md hover:bg-white/90 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -112,7 +126,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
       </div>
 
       <AnimatePresence>
-        {showFields && (
+        {showForm && (
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 16 }}
@@ -121,72 +135,86 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
             transition={{ duration: 0.75, ease: 'easeOut' }}
             className="mt-6 space-y-4 bg-white/75 rounded-2xl shadow-lg p-6 backdrop-blur-sm"
           >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Postcode <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="postcode"
-                    value={formData.postcode}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Bijv: 3815LC"
-                    pattern="[0-9]{4}[A-Za-z]{2}"
-                    title="Voer een geldige Nederlandse postcode in (bijv: 3815LC)"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Huisnummer <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="houseNumber"
-                    value={formData.houseNumber}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Bijv: 93"
-                    required
-                  />
-                </div>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Funda link <span className="text-red-500">*</span>
+                  Postcode <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="url"
-                  name="fundaUrl"
-                  value={formData.fundaUrl}
+                  type="text"
+                  name="postcode"
+                  value={formData.postcode}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Plak hier je Funda woninglink"
+                  placeholder="Bijv: 3815LC"
+                  pattern="[0-9]{4}[A-Za-z]{2}"
+                  title="Voer een geldige Nederlandse postcode in (bijv: 3815LC)"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-2">
-                  We gebruiken de link om een zo goed mogelijk bodadvies voor je te maken.
-                </p>
               </div>
-
-              {validationError && (
-                <p className="text-sm text-red-600">{validationError}</p>
-              )}
-
-              <div className="flex justify-center">
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {isSubmitting ? 'Bezig...' : 'Doorgaan'}
-                </motion.button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Huisnummer <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="houseNumber"
+                  value={formData.houseNumber}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Bijv: 93"
+                  required
+                />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Funda link <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="url"
+                name="fundaUrl"
+                value={formData.fundaUrl}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Plak hier je Funda woninglink"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                We gebruiken de link om een zo goed mogelijk bodadvies voor je te maken.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                E-mailadres
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="jouw.naam@email.com"
+              />
+            </div>
+
+            {validationError && (
+              <p className="text-sm text-red-600">{validationError}</p>
+            )}
+
+            <div className="flex justify-center">
+              <motion.button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {isSubmitting ? 'Bezig...' : 'Doorgaan'}
+              </motion.button>
+            </div>
           </motion.form>
         )}
       </AnimatePresence>

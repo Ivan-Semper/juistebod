@@ -6,11 +6,15 @@ import { PropertyData } from "@/lib/types/PropertyTypes";
 import GoogleMap from "../components/GoogleMap";
 import CheckoutForm from "../components/CheckoutForm";
 import PaymentButton from "../components/PaymentButton";
+import EmailVerification from "../components/EmailVerification";
+
+type Stage = 'form' | 'verify' | 'payment';
 
 export default function CheckoutPage() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [showPayment, setShowPayment] = useState(false);
+  const [orderEmail, setOrderEmail] = useState<string>('');
+  const [stage, setStage] = useState<Stage>('form');
   const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -53,11 +57,19 @@ export default function CheckoutPage() {
       const result = await response.json();
 
       if (result.success) {
-        // Store order ID for payment
-        setOrderId(result.data.orderId);
-        setShowPayment(true);
-        
-        // Order created; show payment section
+        const newOrderId = result.data.orderId;
+        const email = result.data.email || formData.email;
+        setOrderId(newOrderId);
+        setOrderEmail(email);
+
+        // Send verification code email
+        await fetch('/api/verify-email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId: newOrderId }),
+        });
+
+        setStage('verify');
       } else {
         throw new Error(result.message || result.error || 'Failed to create order');
       }
@@ -100,7 +112,7 @@ export default function CheckoutPage() {
                 Persoonlijk Bodadvies
               </h1>
               <p className="text-lg text-gray-800">
-                Vul je gegevens in en ontvang binnen 24 uur professioneel advies
+                Vul je gegevens in en ontvang binnen 48 uur professioneel advies
               </p>
             </div>
           </div>
@@ -132,7 +144,7 @@ export default function CheckoutPage() {
                       <li>✓ Marktanalyse van vergelijkbare woningen</li>
                       <li>✓ Persoonlijk bodadvies op maat</li>
                       <li>✓ Strategie tips voor onderhandeling</li>
-                      <li>✓ Binnen 24 uur in je inbox</li>
+                      <li>✓ Binnen 48 uur in je inbox</li>
                     </ul>
                 </div>
               </div>
@@ -150,12 +162,22 @@ export default function CheckoutPage() {
                 </div>
               )}
               
-              {!showPayment ? (
+              {stage === 'form' && (
                 <CheckoutForm 
                   propertyData={propertyData}
                   onSubmit={handleFormSubmit}
                 />
-              ) : (
+              )}
+
+              {stage === 'verify' && orderId && (
+                <EmailVerification
+                  orderId={orderId}
+                  email={orderEmail}
+                  onVerified={() => setStage('payment')}
+                />
+              )}
+
+              {stage === 'payment' && (
                 <div className="space-y-6">
                   <div className="text-center">
                     <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -168,7 +190,7 @@ export default function CheckoutPage() {
                   
                   <PaymentButton
                     orderId={orderId!}
-                    amount={60.44}
+                    amount={241.94}
                     description="Persoonlijk Bodadvies - JuisteBod"
                     onPaymentSuccess={() => {
                       router.push(`/checkout/success?orderId=${orderId}`);
@@ -177,10 +199,10 @@ export default function CheckoutPage() {
                   
                   <div className="text-center">
                     <button
-                      onClick={() => setShowPayment(false)}
+                      onClick={() => setStage('verify')}
                       className="text-gray-600 hover:text-gray-800 text-sm"
                     >
-                      ← Terug naar formulier
+                      ← Terug naar verificatie
                     </button>
                   </div>
                 </div>

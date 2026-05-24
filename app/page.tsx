@@ -33,9 +33,7 @@ const heroImages = generateHeroImages();
 
 export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(() =>
-    Math.floor(Math.random() * heroImages.length)
-  );
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,6 +42,9 @@ export default function Home() {
 
   // Automatische carousel wisseling
   useEffect(() => {
+    // Randomize starting image only on client to avoid hydration mismatch
+    setCurrentImageIndex(Math.floor(Math.random() * heroImages.length));
+
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
@@ -123,7 +124,7 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: '#FAF9F6' }}>
       {/* Header Navigation */}
       <motion.header 
-        className="fixed top-0 w-full z-50 bg-white shadow-sm"
+        className="fixed top-0 w-full z-50 bg-white shadow-md"
         initial={{ y: 0, opacity: 1 }}
         animate={{ 
           y: isNavVisible ? 0 : -100,
@@ -151,20 +152,17 @@ export default function Home() {
             </div>
             {/* Navigation + mobile button helemaal rechts */}
             <div className="flex flex-1 items-center justify-end">
-              <nav className="hidden md:flex items-center space-x-8">
-                <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
+              <nav className="hidden md:flex items-center space-x-2">
+                <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Hoe werkt het
                 </a>
-                <a href="#persoonlijk-biedadvies" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Persoonlijk biedadvies
+                <a href="#expertise" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+                  Expertise
                 </a>
-                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 transition-colors">
+                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Missie & visie
                 </a>
-                <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Waarom JuisteBod
-                </a>
-                <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
+                <a href="#contact" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Contact
                 </a>
               </nav>
@@ -185,16 +183,13 @@ export default function Home() {
                 <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
                   Hoe werkt het
                 </a>
-                <a href="#persoonlijk-biedadvies" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Persoonlijk biedadvies
+                <a href="#expertise" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+                  Expertise
                 </a>
-                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 transition-colors">
+                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Missie & visie
                 </a>
-                <a href="#waarom-juistebod" className="text-gray-700 hover:text-gray-900 transition-colors">
-                  Waarom JuisteBod
-                </a>
-                <a href="#contact" className="text-gray-700 hover:text-gray-900 transition-colors">
+                <a href="#contact" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Contact
                 </a>
               </div>
@@ -274,6 +269,64 @@ export default function Home() {
             </svg>
           </motion.div>
         </a>
+      </section>
+
+      {/* USP Section */}
+      <section className="py-16 px-6" style={{ backgroundColor: '#FAF9F6' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-12 text-center">
+            <motion.div
+              className="flex flex-col items-center space-y-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0 }}
+            >
+              <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1F3C88' }}>
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 leading-snug">
+                Binnen 48 uur ontvang je een volledig en onderbouwd adviesrapport
+              </h3>
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col items-center space-y-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+            >
+              <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1F3C88' }}>
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 leading-snug">
+                Inclusief 7 slimme biedtips om je positie op de woningmarkt te versterken
+              </h3>
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col items-center space-y-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1F3C88' }}>
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 leading-snug">
+                Altijd samengesteld door ervaren makelaars op basis van menselijk inzicht, geen AI
+              </h3>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Property Results Section */}
@@ -435,155 +488,60 @@ transition={{ duration: 0.6 }}>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-gray-800">{c('step3_title', 'Ontvang je rapport')}</h3>
               <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                {c('step3_text', 'Binnen 24 uur krijg je een uitgebreid bodadvies in je mailbox')}
+                {c('step3_text', 'Binnen 48 uur ontvang je een volledig en onderbouwd adviesrapport in je mailbox')}
               </p>
               <div className="text-xs text-gray-500 bg-white rounded-lg p-3 mx-auto max-w-xs min-h-[56px] flex items-center justify-center mt-auto">
-                ⚡ <strong>Snel:</strong> {c('step3_tip', 'Gemiddeld binnen 12 uur geleverd')}
+                ✓ <strong>Betrouwbaar:</strong> {c('step3_tip', 'Handmatig opgesteld door ervaren makelaars')}
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Extra info */}
-          <motion.div 
-            className="bg-white rounded-xl p-8 shadow-lg max-w-4xl mx-auto"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+          {/* Prijs */}
+          <motion.div
+            className="text-center mt-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
           >
-            <h3 className="text-2xl font-bold mb-6 text-gray-800">Wat krijg je precies?</h3>
-            <div className="grid md:grid-cols-2 gap-8 text-left">
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3">📊 Marktanalyse</h4>
-                <ul className="text-gray-600 space-y-2">
-                  <li>• Vergelijking met soortgelijke woningen</li>
-                  <li>• Prijsontwikkeling in de buurt</li>
-                  <li>• Marktcondities en vraag/aanbod</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3">💡 Persoonlijk advies</h4>
-                <ul className="text-gray-600 space-y-2">
-                  <li>• Optimaal bodbedrag op basis van markt</li>
-                  <li>• Onderhandelingsstrategie</li>
-                  <li>• Tips voor het biedingsproces</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <p className="text-lg font-semibold" style={{ color: '#1F3C88' }}>
-                <span className="line-through text-gray-400">€{c('price_old', '75')}</span>{' '}Nu slechts €{c('price_excl_btw', '49,95')} excl. BTW (€{c('price_incl_btw', '60,44')} incl. BTW) - Geen verborgen kosten
-              </p>
-            </div>
+            <p className="text-xl font-bold" style={{ color: '#1F3C88' }}>
+              Slechts €199,95 excl. BTW — Geen verborgen kosten
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Persoonlijk Biedadvies Section */}
-      <section id="persoonlijk-biedadvies" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-800">
-              {c('personal_advice_title', 'Persoonlijk biedadvies')}
+      {/* Expertise Section */}
+      <section id="expertise">
+        <motion.div
+          className="grid md:grid-cols-2"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="flex items-center justify-center p-12 md:p-20" style={{ backgroundColor: '#1F3C88' }}>
+            <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+              Geen AI,<br />maar<br />ervaring
             </h2>
-            <p className="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
-              {c('personal_advice_intro', 'Bij Juiste bod krijg je persoonlijk biedadvies van een ervaren vastgoedprofesional. Geen algoritme, maar menselijk inzicht. Op basis van kennis van de markt, vergelijkbare woningen én strategieën die echt werken.')}
+          </div>
+          <div className="p-12 md:p-20 text-white space-y-6" style={{ backgroundColor: '#1F3C88' }}>
+            <p className="text-base md:text-lg leading-relaxed opacity-90">
+              Onze makelaars stellen ieder rapport zorgvuldig samen op basis van uitgebreide en exclusieve
+              marktdata, opgebouwd uit meer dan 100.000+ woningtransacties per jaar. Deze datagrondslag geeft
+              een zeer compleet, actueel en op de meest recente data gebaseerd beeld van de woningmarkt en
+              vormt de basis voor een nauwkeurige waardebepaling.
             </p>
-          </motion.div>
-
-          <motion.div 
-            className="prose prose-lg max-w-none text-gray-700 space-y-6 mb-12"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="text-lg leading-relaxed text-center">
-              {c('personal_advice_subtext', 'Ontvang binnen 24 uur een onderbouwd advies dat je helpt slim te bieden zonder honderden euro\'s uit te geven aan een aankoopmakelaar. Geen gok, geen koude data. Gewoon het juiste bod.')}
+            <p className="text-base md:text-lg leading-relaxed opacity-90">
+              Elk rapport wordt handmatig opgesteld en gecontroleerd door ervaren makelaars. Zij analyseren de
+              marktdata, wegen alle relevante factoren en vertalen dit naar een onderbouwd en realistisch advies.
             </p>
-          </motion.div>
-
-          <motion.div 
-            className="bg-white rounded-xl p-8 shadow-lg"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h3 className="text-2xl font-bold mb-8 text-center text-gray-800">
-              Wat je krijgt met persoonlijk advies van JuisteBod.nl:
-            </h3>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_1_title', 'Menselijk inzicht')}</h4>
-                    <p className="text-gray-600">{c('benefit_1_text', 'Geen AI, maar advies van een vastgoedprofessional')}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_2_title', 'Afgestemd op jouw woning')}</h4>
-                    <p className="text-gray-600">{c('benefit_2_text', 'We kijken naar afwerking, ligging, populariteit van de buurt en meer')}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_3_title', 'Slimme biedstrategie')}</h4>
-                    <p className="text-gray-600">{c('benefit_3_text', 'Niet alleen wat je moet bieden, maar ook hoe je het aanpakt')}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_4_title', 'Snelle levering')}</h4>
-                    <p className="text-gray-600">{c('benefit_4_text', 'Binnen 24 uur jouw persoonlijke biedadvies in je mailbox')}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_5_title', 'Betaalbaar')}</h4>
-                    <p className="text-gray-600">{c('benefit_5_text', 'Een fractie van de kosten van een aankoopmakelaar')}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_6_title', 'Onafhankelijk advies')}</h4>
-                    <p className="text-gray-600">{c('benefit_6_text', 'Geen verkooppraatjes, geen belangen, alleen eerlijke informatie')}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <span className="text-gray-400 font-bold text-lg">•</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{c('benefit_7_title', 'Meer kans op succes')}</h4>
-                    <p className="text-gray-600">{c('benefit_7_text', 'Vergroot je kans om niet alleen een bod te doen, maar ook te winnen')}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+            <p className="text-base md:text-lg leading-relaxed opacity-90">
+              Zo ben je verzekerd van een professioneel en betrouwbaar rapport waarop je met vertrouwen je
+              volgende stap kunt baseren.
+            </p>
+          </div>
+        </motion.div>
       </section>
 
       {/* Missie & Visie Section */}
@@ -608,133 +566,38 @@ transition={{ duration: 0.6 }}>
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
             >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Visie</h2>
               <p className="text-lg leading-relaxed">
-                {c('mission_text1', 'Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning zonder dat daar hoge makelaarskosten bij komen kijken.')}
+                {c('mission_text1', 'Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning, zonder onnodig hoge makelaarskosten.')}
               </p>
               <p className="text-lg leading-relaxed">
-                {c('mission_text2', 'Onze missie is om woningzoekers snel, helder en betaalbaar te helpen bij het bepalen van een bod. Zodat je met vertrouwen en kennis van de markt je volgende stap kan zetten!')}
+                {c('mission_text2', 'Onze missie is om woningzoekers snel, duidelijk en betaalbaar te ondersteunen bij het bepalen van een passend bod. Zo krijg je helder inzicht in de markt en kun je met vertrouwen de juiste keuze maken voor je volgende stap, zodat jij de sleutels van je droomwoning in ontvangst kan nemen.')}
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Why JuisteBod Section */}
-      <section id="waarom-juistebod" className="py-12 px-6" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            className="text-center"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-whileInView={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-16 text-gray-800">
-              {c('why_title', 'Waarom JuisteBod.nl?')}
-            </h2>
-          </motion.div>
-          
-          <motion.div 
-            className="prose prose-lg max-w-none text-gray-700 space-y-6"
-            viewport={{ once: true, margin: "-100px" }}
-            initial={{ opacity: 0, y: 30 }}
-whileInView={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}
-          >
-            <p className="text-lg leading-relaxed">
-              {c('why_text1', 'De woningmarkt is de afgelopen jaren volledig op z\'n kop gezet. Waar huizen vroeger maanden te koop stonden, is er nu amper tijd om adem te halen. Je bezichtigt een woning, en voor je het weet moet je een bod doen van tienduizenden euro\'s boven de vraagprijs — vaak zonder te weten of dat wel verstandig is.')}
-            </p>
-            
-            <p className="text-lg leading-relaxed">
-              {c('why_text2', 'Voor veel mensen, zeker starters, voelt het alsof ze constant achter het net vissen. Steeds wéér misgegrepen. Steeds te laat. Of nét niet hoog genoeg. In deze hectische markt kreeg ik steeds vaker dezelfde vraag van vrienden, kennissen en uiteindelijk vrienden van vrienden:')}
-            </p>
-            
-            <motion.div 
-              className="text-center my-12"
-              viewport={{ once: true, margin: "-100px" }}
-              initial={{ opacity: 0, scale: 0.8 }}
-whileInView={{ opacity: 1, scale: 1 }}
-transition={{ duration: 0.6 }}
-            >
-              <p className="text-2xl md:text-3xl font-semibold text-gray-800 italic">
-                &ldquo;{c('why_quote', 'Wat moet ik bieden op dit huis?')}&rdquo;
-              </p>
-            </motion.div>
-            
-            <p className="text-lg leading-relaxed">
-              {c('why_text3', 'Het viel me op hoeveel mensen, vooral starters, compleet vastlopen in het biedproces. Daarom ben ik JuisteBod.nl gestart. Geen AI-gegenereerde schatting, maar persoonlijk advies van een vastgoeddeskundige met actuele marktkennis en ervaring in het makelaarsvak.')}
-            </p>
-            
-            <motion.div 
-              className="bg-white rounded-xl p-8 shadow-lg my-12"
-              viewport={{ once: true, margin: "-100px" }}
-              initial={{ opacity: 0, scale: 0.8 }}
-whileInView={{ opacity: 1, scale: 1 }}
-transition={{ duration: 0.6 }}
-            >
-              <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                {c('why_highlight_title', 'En het mooiste?')}
-              </h3>
-              <div className="text-center space-y-4">
-                <p className="text-lg text-gray-700">
-                  {c('why_highlight_text1', 'Een gemiddelde aankoopmakelaar kost al snel tussen de €1.500 en €3.000.')}
-                </p>
-                <p className="text-xl font-semibold" style={{ color: '#1F3C88' }}>
-                  Bij JuisteBod.nl krijg je persoonlijk en professioneel advies voor slechts €{c('price_excl_btw', '49,95')} excl. BTW (€{c('price_incl_btw', '60,44')} incl. BTW).
-                </p>
-                <p className="text-lg font-medium" style={{ color: '#7C8471' }}>
-                  {c('why_highlight_text2', 'Dezelfde kennis maar een fractie van de prijs.')}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer id="contact" className="py-16 px-6" style={{ backgroundColor: '#FAF9F6', borderTop: '1px solid rgba(124, 132, 113, 0.2)' }}>
         <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12 mb-12 items-center">
+          <div className="grid md:grid-cols-2 gap-12 mb-12 items-center">
             {/* Company Info */}
             <div className="text-center md:text-left">
-              <div className="mb-4">
-                <Image
-                  src="/Juiste bod logo boven.png"
-                  alt="JuisteBod.nl Logo"
-                  width={250}
-                  height={80}
-                  className="object-contain mx-auto md:mx-0"
-                />
-              </div>
+              <p className="text-2xl font-bold text-gray-800 mb-2">JuisteBod.nl</p>
               <p className="text-lg underline" style={{ color: '#7C8471' }}>
                 {c('footer_tagline', 'Het juiste bod op elke woning')}
               </p>
             </div>
 
             {/* Contact Info */}
-            <div className="text-center md:text-center">
+            <div className="text-center">
               <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                Neem contact op
+                Neem contact op met ons team
               </h3>
-              <p className="text-lg text-gray-800 mb-2">
-                {c('contact_name', 'Netraam Kremer')}
-              </p>
               <p className="text-lg text-gray-600">
                 Email: {c('contact_email', 'info@juistebod.nl')}
               </p>
-            </div>
-
-            {/* Contact Photo */}
-            <div className="flex justify-center md:justify-end">
-              <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden shadow-md">
-                <Image
-                  src="/images/Netraam_foto.jpeg"
-                  alt="Contactpersoon JuisteBod"
-                  width={192}
-                  height={192}
-                  className="w-full h-full object-cover grayscale"
-                />
-              </div>
             </div>
           </div>
 

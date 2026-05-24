@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const amount = order.amount_paid || 60.44;
+    const amount = order.amount_paid || 241.94;
 
     const redirectUrl = `${process.env.NEXT_PUBLIC_SITE_URL || request.headers.get('origin') || 'https://juistebod.nl'}/checkout/success?orderId=${orderId}`;
 
