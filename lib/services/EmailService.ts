@@ -7,11 +7,22 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.FROM_EMAIL || 'JuisteBod <onboarding@resend.dev>';
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || 'info@juistebod.nl';
 
+// Escape klantinvoer voordat die in e-mail-HTML terechtkomt (voorkomt HTML-injectie)
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export class EmailService {
   static async sendCustomerConfirmation(order: Order): Promise<boolean> {
     try {
       const propertyData = order.property_data || {};
-      const address = propertyData.address || 'Niet beschikbaar';
+      const address = escapeHtml(propertyData.address || 'Niet beschikbaar');
+      const firstName = escapeHtml(order.first_name);
 
       const { error } = await resend.emails.send({
         from: FROM_EMAIL,
@@ -38,7 +49,7 @@ export class EmailService {
           <td style="padding:40px 40px 20px;text-align:center;">
             <div style="width:64px;height:64px;border-radius:50%;background-color:#E8F0EC;margin:0 auto 20px;line-height:64px;font-size:28px;">&#10003;</div>
             <h2 style="color:#1F3C88;margin:0 0 8px;font-size:22px;">Betaling ontvangen!</h2>
-            <p style="color:#666;margin:0;font-size:15px;">Bedankt voor je bestelling, ${order.first_name}.</p>
+            <p style="color:#666;margin:0;font-size:15px;">Bedankt voor je bestelling, ${firstName}.</p>
           </td>
         </tr>
 
@@ -75,7 +86,7 @@ export class EmailService {
               </tr>
               <tr>
                 <td style="padding:8px 0;font-size:14px;color:#555;">
-                  <strong style="color:#1F3C88;">3.</strong> Binnen <strong>24 uur</strong> ontvang je het rapport per email
+                  <strong style="color:#1F3C88;">3.</strong> Binnen <strong>48 uur</strong> ontvang je het rapport per email
                 </td>
               </tr>
             </table>
@@ -114,11 +125,15 @@ export class EmailService {
   static async sendAdminNotification(order: Order): Promise<boolean> {
     try {
       const propertyData = order.property_data || {};
-      const address = propertyData.address || 'Niet beschikbaar';
-      const fundaUrl = order.property_url || 'Niet beschikbaar';
-      const price = propertyData.price || 'Niet beschikbaar';
+      const address = escapeHtml(propertyData.address || 'Niet beschikbaar');
+      const fundaUrl = escapeHtml(order.property_url || 'Niet beschikbaar');
+      const price = escapeHtml(propertyData.price || 'Niet beschikbaar');
       const customerInfo = propertyData.customerInfo || {};
-      const additionalInfo = customerInfo.additionalInfo || 'Geen';
+      const additionalInfo = escapeHtml(customerInfo.additionalInfo || 'Geen');
+      const firstName = escapeHtml(order.first_name);
+      const lastName = escapeHtml(order.last_name);
+      const email = escapeHtml(order.email);
+      const phone = escapeHtml(order.phone || 'Niet opgegeven');
 
       const { error } = await resend.emails.send({
         from: FROM_EMAIL,
@@ -145,7 +160,7 @@ export class EmailService {
           <td style="padding:30px 40px 20px;">
             <div style="background-color:#E8F0EC;border-radius:8px;padding:16px 20px;">
               <p style="margin:0;font-size:15px;color:#1F3C88;font-weight:600;">
-                Er is een nieuwe betaling binnengekomen van ${order.first_name} ${order.last_name}
+                Er is een nieuwe betaling binnengekomen van ${firstName} ${lastName}
               </p>
             </div>
           </td>
@@ -156,9 +171,9 @@ export class EmailService {
           <td style="padding:10px 40px 20px;">
             <h3 style="color:#333;margin:0 0 12px;font-size:16px;border-bottom:2px solid #1F3C88;padding-bottom:8px;">Klantgegevens</h3>
             <table width="100%" cellpadding="4" cellspacing="0" style="font-size:14px;">
-              <tr><td style="color:#888;width:140px;">Naam</td><td style="color:#333;font-weight:600;">${order.first_name} ${order.last_name}</td></tr>
-              <tr><td style="color:#888;">Email</td><td style="color:#333;"><a href="mailto:${order.email}" style="color:#1F3C88;">${order.email}</a></td></tr>
-              <tr><td style="color:#888;">Telefoon</td><td style="color:#333;"><a href="tel:${order.phone}" style="color:#1F3C88;">${order.phone || 'Niet opgegeven'}</a></td></tr>
+              <tr><td style="color:#888;width:140px;">Naam</td><td style="color:#333;font-weight:600;">${firstName} ${lastName}</td></tr>
+              <tr><td style="color:#888;">Email</td><td style="color:#333;"><a href="mailto:${email}" style="color:#1F3C88;">${email}</a></td></tr>
+              <tr><td style="color:#888;">Telefoon</td><td style="color:#333;"><a href="tel:${phone}" style="color:#1F3C88;">${phone}</a></td></tr>
               <tr><td style="color:#888;">Betaald</td><td style="color:#1F3C88;font-weight:600;">&euro;${Number(order.amount_paid || 241.94).toFixed(2)}</td></tr>
             </table>
           </td>
@@ -222,6 +237,7 @@ export class EmailService {
 
   static async sendVerificationCode(email: string, firstName: string, code: string): Promise<boolean> {
     try {
+      const safeFirstName = escapeHtml(firstName);
       const { error } = await resend.emails.send({
         from: FROM_EMAIL,
         to: email,
@@ -242,7 +258,7 @@ export class EmailService {
         <tr>
           <td style="padding:40px 40px 20px;text-align:center;">
             <h2 style="color:#1F3C88;margin:0 0 8px;font-size:20px;">Bevestig je e-mailadres</h2>
-            <p style="color:#555;margin:0 0 32px;font-size:15px;">Hoi ${firstName}, gebruik de onderstaande code om door te gaan met je aanvraag.</p>
+            <p style="color:#555;margin:0 0 32px;font-size:15px;">Hoi ${safeFirstName}, gebruik de onderstaande code om door te gaan met je aanvraag.</p>
             <div style="display:inline-block;background-color:#F0F4FF;border:2px solid #1F3C88;border-radius:12px;padding:20px 48px;">
               <span style="font-size:40px;font-weight:700;letter-spacing:12px;color:#1F3C88;">${code}</span>
             </div>

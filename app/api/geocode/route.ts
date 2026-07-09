@@ -1,12 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit, getClientIP } from '@/lib/utils/rateLimit';
 
 export async function POST(request: NextRequest) {
+  // Rate limit: voorkomt misbruik van onze Google Maps-quota
+  const ip = getClientIP(request);
+  const { allowed } = rateLimit(`geocode:${ip}`, 15, 60_000);
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Te veel verzoeken. Probeer het later opnieuw.' },
+      { status: 429 }
+    );
+  }
+
   try {
     const { postcode, houseNumber } = await request.json();
 
-    if (!postcode || !houseNumber) {
+    if (!postcode || !houseNumber || typeof postcode !== 'string' || typeof houseNumber !== 'string') {
       return NextResponse.json(
         { success: false, error: 'Postcode en huisnummer zijn verplicht' },
+        { status: 400 }
+      );
+    }
+
+    if (postcode.length > 10 || houseNumber.length > 10) {
+      return NextResponse.json(
+        { success: false, error: 'Ongeldige invoer' },
         { status: 400 }
       );
     }
@@ -56,9 +74,9 @@ export async function POST(request: NextRequest) {
       status: data.status,
       error: data.error_message || 'Adres niet gevonden'
     });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json(
-      { success: false, error: error?.message || 'Onbekende fout' },
+      { success: false, error: 'Adres opzoeken is mislukt' },
       { status: 500 }
     );
   }

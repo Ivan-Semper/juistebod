@@ -4,8 +4,19 @@ import {
   signToken,
   COOKIE_NAME
 } from '@/lib/admin/auth';
+import { rateLimit, getClientIP } from '@/lib/utils/rateLimit';
 
 export async function POST(request: NextRequest) {
+  // Max 5 loginpogingen per kwartier per IP tegen brute-force
+  const ip = getClientIP(request);
+  const { allowed } = rateLimit(`admin-login:${ip}`, 5, 15 * 60_000);
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Te veel loginpogingen. Probeer het later opnieuw.' },
+      { status: 429 }
+    );
+  }
+
   try {
     const { username, password } = await request.json();
 

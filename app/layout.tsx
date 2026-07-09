@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     default: "JuisteBod.nl - Persoonlijk woningbodadvies | Het juiste bod op elke woning",
     template: "%s | JuisteBod.nl",
   },
-  description: "Krijg binnen 24 uur persoonlijk bodadvies van een vastgoedprofessional. Vergelijk je woning, ontvang een slimme biedstrategie en bied met vertrouwen. Vanaf €49,95 excl. BTW.",
+  description: "Krijg binnen 48 uur persoonlijk bodadvies van een ervaren makelaar. Vergelijk je woning, ontvang een slimme biedstrategie en bied met vertrouwen. Voor €199,95 excl. BTW.",
   metadataBase: new URL('https://juistebod.nl'),
   alternates: {
     canonical: 'https://juistebod.nl',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'JuisteBod.nl - Persoonlijk woningbodadvies',
-    description: 'Krijg binnen 24 uur persoonlijk bodadvies van een vastgoedprofessional. Vergelijk je woning, ontvang een slimme biedstrategie en bied met vertrouwen.',
+    description: 'Krijg binnen 48 uur persoonlijk bodadvies van een ervaren makelaar. Vergelijk je woning, ontvang een slimme biedstrategie en bied met vertrouwen.',
     url: 'https://juistebod.nl',
     siteName: 'JuisteBod.nl',
     locale: 'nl_NL',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'JuisteBod.nl - Persoonlijk woningbodadvies',
-    description: 'Krijg binnen 24 uur persoonlijk bodadvies van een vastgoedprofessional. Vanaf €49,95 excl. BTW.',
+    description: 'Krijg binnen 48 uur persoonlijk bodadvies van een ervaren makelaar. Voor €199,95 excl. BTW.',
     images: ['/landing_page_photos/margaret-polinder-3DsMhQF9aB0-unsplash.jpg'],
   },
   robots: {

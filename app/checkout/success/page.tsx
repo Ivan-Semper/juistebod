@@ -149,7 +149,7 @@ function SuccessContent() {
           </h1>
 
           <p className="text-gray-700 mb-6">
-            Je betaling is verwerkt. Je ontvangt een bevestiging per e-mail. Binnen 24 uur ontvang je jouw persoonlijke bodadvies.
+            Je betaling is verwerkt. Je ontvangt een bevestiging per e-mail. Binnen 48 uur ontvang je jouw persoonlijke bodadvies.
           </p>
 
           <div className="space-y-4">

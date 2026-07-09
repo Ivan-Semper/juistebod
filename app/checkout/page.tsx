@@ -20,13 +20,17 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     // Get property data from session storage
-    const storedData = sessionStorage.getItem('propertyData');
-    if (storedData) {
-      setPropertyData(JSON.parse(storedData));
-    } else {
-      // If no property data, redirect to home
-      router.push('/');
+    try {
+      const storedData = sessionStorage.getItem('propertyData');
+      if (storedData) {
+        setPropertyData(JSON.parse(storedData));
+        return;
+      }
+    } catch {
+      // Corrupte data: opruimen en terug naar home
+      try { sessionStorage.removeItem('propertyData'); } catch { /* ignore */ }
     }
+    router.push('/');
   }, [router]);
 
   const handleFormSubmit = async (formData: any) => {
@@ -192,19 +196,11 @@ export default function CheckoutPage() {
                     orderId={orderId!}
                     amount={241.94}
                     description="Persoonlijk Bodadvies - JuisteBod"
-                    onPaymentSuccess={() => {
-                      router.push(`/checkout/success?orderId=${orderId}`);
-                    }}
                   />
-                  
-                  <div className="text-center">
-                    <button
-                      onClick={() => setStage('verify')}
-                      className="text-gray-600 hover:text-gray-800 text-sm"
-                    >
-                      ← Terug naar verificatie
-                    </button>
-                  </div>
+
+                  <p className="text-center text-sm text-gray-500">
+                    Je wordt veilig doorgestuurd naar onze betaalprovider Mollie.
+                  </p>
                 </div>
               )}
             </div>

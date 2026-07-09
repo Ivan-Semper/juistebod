@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import PropertyForm from "./components/PropertyForm";
 import GoogleMap from "./components/GoogleMap";
@@ -35,18 +35,15 @@ export default function Home() {
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const c = useContent();
 
   // Automatische carousel wisseling
   useEffect(() => {
-    // Randomize starting image only on client to avoid hydration mismatch
-    setCurrentImageIndex(Math.floor(Math.random() * heroImages.length));
-
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => 
+      setCurrentImageIndex((prevIndex) =>
         prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
       );
     }, 15000); // Wissel elke 15 seconden
@@ -54,15 +51,17 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Scroll-based navigation visibility
+  // Scroll-based navigation visibility (ref i.p.v. state zodat de listener niet
+  // bij elke scroll-tick opnieuw geregistreerd wordt)
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+      const lastScrollY = lastScrollYRef.current;
+
       // Toon navigatie als we helemaal bovenaan zijn (eerste 50px)
       if (currentScrollY < 50) {
         setIsNavVisible(true);
-      } 
+      }
       // Verberg navigatie als we naar beneden scrollen
       else if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsNavVisible(false);
@@ -71,13 +70,13 @@ export default function Home() {
       else if (currentScrollY < lastScrollY) {
         setIsNavVisible(true);
       }
-      
-      setLastScrollY(currentScrollY);
+
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   useEffect(() => {
     const onResize = () => {
@@ -156,9 +155,6 @@ export default function Home() {
                 <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Hoe werkt het
                 </a>
-                <a href="#expertise" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
-                  Expertise
-                </a>
                 <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Missie & visie
                 </a>
@@ -180,16 +176,13 @@ export default function Home() {
           {isMenuOpen && (
             <nav className="md:hidden mt-4 border-t border-gray-200 pt-4">
               <div className="flex flex-col space-y-3 text-center">
-                <a href="#hoe-werkt-het" className="text-gray-700 hover:text-gray-900 transition-colors">
+                <a href="#hoe-werkt-het" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Hoe werkt het
                 </a>
-                <a href="#expertise" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
-                  Expertise
-                </a>
-                <a href="#missie-visie" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+                <a href="#missie-visie" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Missie & visie
                 </a>
-                <a href="#contact" className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+                <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
                   Contact
                 </a>
               </div>
@@ -200,24 +193,36 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image Carousel */}
+        {/* Background Image Carousel — alleen de huidige, vorige en volgende foto
+            worden gemount zodat niet alle 7 foto's tegelijk laden */}
         <div className="absolute inset-0 z-0">
-          {heroImages.map((image, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                className="object-cover"
-                priority={index === 0}
-              />
-            </div>
-          ))}
+          {heroImages.map((image, index) => {
+            const total = heroImages.length;
+            const prevIndex = (currentImageIndex + total - 1) % total;
+            const nextIndex = (currentImageIndex + 1) % total;
+            const shouldMount =
+              index === currentImageIndex || index === prevIndex || index === nextIndex;
+            if (!shouldMount) return null;
+
+            return (
+              <div
+                key={index}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="100vw"
+                  quality={70}
+                  className="object-cover"
+                  priority={index === 0}
+                />
+              </div>
+            );
+          })}
           <div className="absolute inset-0 hero-overlay"></div>
         </div>
 
@@ -269,6 +274,39 @@ export default function Home() {
             </svg>
           </motion.div>
         </a>
+      </section>
+
+      {/* Expertise Section */}
+      <section id="expertise">
+        <motion.div
+          className="grid md:grid-cols-2"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="flex items-center justify-center p-12 md:p-20" style={{ backgroundColor: '#1F3C88' }}>
+            <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+              Geen AI,<br />maar<br />ervaring
+            </h2>
+          </div>
+          <div className="p-12 md:p-20 text-white space-y-6" style={{ backgroundColor: '#1F3C88' }}>
+            <p className="text-base md:text-lg leading-relaxed opacity-90">
+              Onze makelaars stellen ieder rapport zorgvuldig samen op basis van uitgebreide en exclusieve
+              marktdata, opgebouwd uit meer dan 100.000+ woningtransacties per jaar. Deze datagrondslag geeft
+              een zeer compleet, actueel en op de meest recente data gebaseerd beeld van de woningmarkt en
+              vormt de basis voor een nauwkeurige waardebepaling.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed opacity-90">
+              Elk rapport wordt handmatig opgesteld en gecontroleerd door ervaren makelaars. Zij analyseren de
+              marktdata, wegen alle relevante factoren en vertalen dit naar een onderbouwd en realistisch advies.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed opacity-90">
+              Zo ben je verzekerd van een professioneel en betrouwbaar rapport waarop je met vertrouwen je
+              volgende stap kunt baseren.
+            </p>
+          </div>
+        </motion.div>
       </section>
 
       {/* USP Section */}
@@ -419,7 +457,7 @@ export default function Home() {
       )}
 
       {/* How It Works Section */}
-      <section id="hoe-werkt-het" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
+      <section id="hoe-werkt-het" className="py-24 px-6 scroll-mt-20" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2 
             className="text-4xl md:text-5xl font-bold mb-20 text-gray-800"
@@ -511,41 +549,8 @@ transition={{ duration: 0.6 }}>
         </div>
       </section>
 
-      {/* Expertise Section */}
-      <section id="expertise">
-        <motion.div
-          className="grid md:grid-cols-2"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="flex items-center justify-center p-12 md:p-20" style={{ backgroundColor: '#1F3C88' }}>
-            <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-              Geen AI,<br />maar<br />ervaring
-            </h2>
-          </div>
-          <div className="p-12 md:p-20 text-white space-y-6" style={{ backgroundColor: '#1F3C88' }}>
-            <p className="text-base md:text-lg leading-relaxed opacity-90">
-              Onze makelaars stellen ieder rapport zorgvuldig samen op basis van uitgebreide en exclusieve
-              marktdata, opgebouwd uit meer dan 100.000+ woningtransacties per jaar. Deze datagrondslag geeft
-              een zeer compleet, actueel en op de meest recente data gebaseerd beeld van de woningmarkt en
-              vormt de basis voor een nauwkeurige waardebepaling.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed opacity-90">
-              Elk rapport wordt handmatig opgesteld en gecontroleerd door ervaren makelaars. Zij analyseren de
-              marktdata, wegen alle relevante factoren en vertalen dit naar een onderbouwd en realistisch advies.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed opacity-90">
-              Zo ben je verzekerd van een professioneel en betrouwbaar rapport waarop je met vertrouwen je
-              volgende stap kunt baseren.
-            </p>
-          </div>
-        </motion.div>
-      </section>
-
       {/* Missie & Visie Section */}
-      <section id="missie-visie" className="py-24 px-6" style={{ backgroundColor: '#FAF9F6' }}>
+      <section id="missie-visie" className="py-24 px-6 scroll-mt-20" style={{ backgroundColor: '#FAF9F6' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-end">
             {/* Weegschaal - neemt 5 kolommen links */}
@@ -566,7 +571,7 @@ transition={{ duration: 0.6 }}>
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Visie</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Over ons</h2>
               <p className="text-lg leading-relaxed">
                 {c('mission_text1', 'Wij geloven dat iedereen recht heeft op eerlijk en deskundig advies bij het kopen van een woning, zonder onnodig hoge makelaarskosten.')}
               </p>
@@ -579,7 +584,7 @@ transition={{ duration: 0.6 }}>
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="py-16 px-6" style={{ backgroundColor: '#FAF9F6', borderTop: '1px solid rgba(124, 132, 113, 0.2)' }}>
+      <footer id="contact" className="py-16 px-6 scroll-mt-20" style={{ backgroundColor: '#FAF9F6', borderTop: '1px solid rgba(124, 132, 113, 0.2)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 mb-12 items-center">
             {/* Company Info */}
@@ -611,10 +616,10 @@ transition={{ duration: 0.6 }}>
                 href={c('instagram_url', 'https://www.instagram.com/juistebod?igsh=MXBxZXNpbDRmbXRx')} 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors hover:scale-105 transform"
+                className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-all hover:scale-105 transform"
                 style={{ backgroundColor: '#7C8471' }}
-                onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#6b7562'}
-                onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#7C8471'}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#6b7562'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#7C8471'; }}
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>

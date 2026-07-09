@@ -58,6 +58,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    if (typeof additionalInfo === 'string' && additionalInfo.length > 2000) {
+      return NextResponse.json(
+        { success: false, error: 'Aanvullende informatie is te lang (max 2000 tekens)' },
+        { status: 400 }
+      )
+    }
+
+    if (typeof propertyUrl !== 'string' || propertyUrl.length > 2000) {
+      return NextResponse.json(
+        { success: false, error: 'Ongeldige woninglink' },
+        { status: 400 }
+      )
+    }
+
     const order = await DatabaseService.createOrder({
       email,
       firstName,
@@ -93,13 +107,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     logger.error('Error creating order', { error })
-    
+
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to create order',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { success: false, error: 'Failed to create order' },
       { status: 500 }
     )
   }
@@ -112,6 +122,14 @@ export async function GET(request: NextRequest) {
 
     // Single order lookup by ID (used by success page to verify payment)
     if (orderId) {
+      // Valideer UUID-formaat zodat Supabase geen 500 teruggeeft op rommel-invoer
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      if (!uuidRegex.test(orderId)) {
+        return NextResponse.json(
+          { success: false, error: 'Order not found' },
+          { status: 404 }
+        )
+      }
       const order = await DatabaseService.getOrderById(orderId)
       if (!order) {
         return NextResponse.json(
@@ -150,13 +168,9 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     logger.error('Error fetching orders', { error })
-    
+
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch orders',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { success: false, error: 'Failed to fetch orders' },
       { status: 500 }
     )
   }

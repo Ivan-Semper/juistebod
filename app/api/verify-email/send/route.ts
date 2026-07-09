@@ -81,12 +81,17 @@ export async function PATCH(request: NextRequest) {
     // Fetch order
     const { data: order, error: fetchError } = await supabaseAdmin
       .from('orders')
-      .select('id, first_name, property_data')
+      .select('id, first_name, property_data, payment_status')
       .eq('id', orderId)
       .single()
 
     if (fetchError || !order) {
       return NextResponse.json({ success: false, error: 'Bestelling niet gevonden' }, { status: 404 })
+    }
+
+    // E-mail mag niet meer gewijzigd worden nadat die is geverifieerd of de order is betaald
+    if (order.property_data?.emailVerified || order.payment_status === 'paid') {
+      return NextResponse.json({ success: false, error: 'E-mailadres kan niet meer worden gewijzigd' }, { status: 400 })
     }
 
     const code = generateCode()

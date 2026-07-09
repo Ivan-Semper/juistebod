@@ -29,6 +29,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Alleen echte afbeeldingen accepteren, max 8MB
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json(
+        { success: false, error: 'Alleen JPG, PNG of WebP toegestaan' },
+        { status: 400 }
+      )
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      return NextResponse.json(
+        { success: false, error: 'Bestand is te groot (max 8MB)' },
+        { status: 400 }
+      )
+    }
+
     const targetPath = IMAGE_PATHS[imageId]
     if (!targetPath) {
       return NextResponse.json(

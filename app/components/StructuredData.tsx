@@ -4,16 +4,16 @@ export default function StructuredData() {
     '@type': 'LocalBusiness',
     name: 'JuisteBod.nl',
     description:
-      'Persoonlijk woningbodadvies van een vastgoedprofessional. Krijg binnen 24 uur een onderbouwd bodadvies voor jouw droomwoning.',
+      'Persoonlijk woningbodadvies van ervaren makelaars. Krijg binnen 48 uur een onderbouwd bodadvies voor jouw droomwoning.',
     url: 'https://juistebod.nl',
     logo: 'https://juistebod.nl/Juistebod%20logo%20voorkant.png',
-    image: 'https://juistebod.nl/images/hero-photo-1.jpg',
+    image: 'https://juistebod.nl/landing_page_photos/margaret-polinder-3DsMhQF9aB0-unsplash.jpg',
     email: 'info@juistebod.nl',
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'NL',
     },
-    priceRange: '€60,44',
+    priceRange: '€241,94',
     areaServed: {
       '@type': 'Country',
       name: 'Nederland',
@@ -28,7 +28,7 @@ export default function StructuredData() {
     '@type': 'Product',
     name: 'Persoonlijk Woningbodadvies',
     description:
-      'Ontvang binnen 24 uur een professioneel en persoonlijk bodadvies van een vastgoeddeskundige. Inclusief marktanalyse, vergelijking met soortgelijke woningen en een slimme biedstrategie.',
+      'Ontvang binnen 48 uur een professioneel en persoonlijk bodadvies van een ervaren makelaar. Inclusief marktanalyse, vergelijking met soortgelijke woningen en een slimme biedstrategie.',
     brand: {
       '@type': 'Brand',
       name: 'JuisteBod.nl',
@@ -52,7 +52,7 @@ export default function StructuredData() {
         name: 'Hoe werkt JuisteBod.nl?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Vul je postcode en huisnummer in samen met de Funda-link. Vervolgens vul je je contactgegevens in en ontvang je binnen 24 uur een uitgebreid persoonlijk bodadvies in je mailbox.',
+          text: 'Vul je postcode en huisnummer in samen met de Funda-link. Vervolgens vul je je contactgegevens in en ontvang je binnen 48 uur een uitgebreid persoonlijk bodadvies in je mailbox.',
         },
       },
       {
@@ -60,7 +60,7 @@ export default function StructuredData() {
         name: 'Wat kost een bodadvies bij JuisteBod.nl?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Een persoonlijk woningbodadvies kost €49,95 exclusief BTW, oftewel €60,44 inclusief BTW. Geen verborgen kosten.',
+          text: 'Een persoonlijk woningbodadvies kost €199,95 exclusief BTW, oftewel €241,94 inclusief BTW. Geen verborgen kosten.',
         },
       },
       {
@@ -68,7 +68,7 @@ export default function StructuredData() {
         name: 'Hoe snel ontvang ik mijn bodadvies?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Je ontvangt je persoonlijke bodadvies binnen 24 uur na betaling, gemiddeld zelfs binnen 12 uur.',
+          text: 'Je ontvangt je persoonlijke bodadvies binnen 48 uur na betaling.',
         },
       },
       {
@@ -84,7 +84,7 @@ export default function StructuredData() {
         name: 'Is het advies van JuisteBod door AI gemaakt?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Nee, elk advies wordt persoonlijk opgesteld door een ervaren vastgoedprofessional met actuele marktkennis. Geen AI, maar menselijk inzicht.',
+          text: 'Nee, elk advies wordt persoonlijk opgesteld door ervaren makelaars met actuele marktkennis. Geen AI, maar menselijk inzicht.',
         },
       },
     ],

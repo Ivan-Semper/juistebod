@@ -13,13 +13,13 @@ function getSecret(): Uint8Array {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (
-    pathname.startsWith('/admin/dashboard') ||
-    pathname.startsWith('/admin/content') ||
-    pathname.startsWith('/admin/orders') ||
-    pathname.startsWith('/admin/images') ||
-    (pathname.startsWith('/api/admin/') && !pathname.startsWith('/api/admin/login'))
-  ) {
+  // Publiek: de login-pagina zelf en het login-endpoint
+  const isPublic =
+    pathname === '/admin' ||
+    pathname === '/admin/' ||
+    pathname.startsWith('/api/admin/login');
+
+  if (!isPublic) {
     const token = request.cookies.get(COOKIE_NAME)?.value;
 
     if (!token) {
@@ -46,12 +46,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/admin/dashboard/:path*',
-    '/admin/content/:path*',
-    '/admin/orders/:path*',
-    '/admin/images/:path*',
-    '/api/admin/content/:path*',
-    '/api/admin/images/:path*',
-    '/api/admin/logout/:path*',
+    '/admin/:path*',
+    '/api/admin/:path*',
   ]
 };

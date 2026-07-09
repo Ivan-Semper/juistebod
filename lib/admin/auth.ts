@@ -36,6 +36,19 @@ export async function verifyToken(token: string): Promise<AdminPayload | null> {
   }
 }
 
+// Vergelijking in constante tijd zodat timing-analyse geen karakters kan raden
+function timingSafeEqual(a: string, b: string): boolean {
+  const encoder = new TextEncoder();
+  const aBytes = encoder.encode(a);
+  const bBytes = encoder.encode(b);
+  let diff = aBytes.length ^ bBytes.length;
+  const len = Math.max(aBytes.length, bBytes.length);
+  for (let i = 0; i < len; i++) {
+    diff |= (aBytes[i] ?? 0) ^ (bBytes[i] ?? 0);
+  }
+  return diff === 0;
+}
+
 export function validateCredentials(
   username: string,
   password: string
@@ -45,7 +58,9 @@ export function validateCredentials(
   if (!adminUsername || !adminPassword) {
     return false;
   }
-  return username === adminUsername && password === adminPassword;
+  const userOk = timingSafeEqual(username, adminUsername);
+  const passOk = timingSafeEqual(password, adminPassword);
+  return userOk && passOk;
 }
 
 export { COOKIE_NAME };

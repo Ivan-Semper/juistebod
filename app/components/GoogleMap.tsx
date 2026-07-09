@@ -223,21 +223,25 @@ export default function GoogleMap({
                 animation: (google.maps as any).Animation.DROP
               });
 
-              const infoWindow = showInfoWindow
-                ? new google.maps.InfoWindow({
-                    content: `
-                      <div style="padding: 12px; font-family: Inter, sans-serif; max-width: 200px;">
-                        <h3 style="margin: 0 0 8px 0; color: #1F3C88; font-size: 16px; font-weight: 600;">
-                          ${propertyTitle}
-                        </h3>
-                        <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.4;">
-                          ${address}
-                        </p>
-                      </div>
-                    `,
-                    disableAutoPan: false
-                  })
-                : null;
+              // Bouw de InfoWindow-inhoud via DOM-nodes zodat adres/titel nooit als HTML wordt geparsed
+              let infoWindow: any = null;
+              if (showInfoWindow) {
+                const container = document.createElement('div');
+                container.style.cssText = 'padding: 12px; font-family: Inter, sans-serif; max-width: 200px;';
+                const heading = document.createElement('h3');
+                heading.style.cssText = 'margin: 0 0 8px 0; color: #1F3C88; font-size: 16px; font-weight: 600;';
+                heading.textContent = propertyTitle;
+                const addressLine = document.createElement('p');
+                addressLine.style.cssText = 'margin: 0; color: #666; font-size: 14px; line-height: 1.4;';
+                addressLine.textContent = address;
+                container.appendChild(heading);
+                container.appendChild(addressLine);
+
+                infoWindow = new google.maps.InfoWindow({
+                  content: container,
+                  disableAutoPan: false
+                });
+              }
 
               if (infoWindow) {
                 // Show info window on marker click
