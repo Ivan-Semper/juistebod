@@ -80,11 +80,6 @@ export default function AnimatedWeegschaal({
         <video
           ref={videoRef}
           className="w-full h-auto object-contain"
-          style={{
-            // Kleine crop aan de onderkant van de video (lege ruimte in het bronbestand)
-            clipPath: 'inset(0 0 5% 0)',
-            marginBottom: '-5%'
-          }}
           muted
           playsInline
           preload="auto"
