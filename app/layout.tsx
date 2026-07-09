@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import StructuredData from "./components/StructuredData";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+// Serif display-font voor koppen: geeft de site een premium, redactionele uitstraling
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -66,7 +77,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nl">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${fraunces.variable} antialiased`}>
         <StructuredData />
         {children}
         <SpeedInsights />

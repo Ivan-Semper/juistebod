@@ -111,11 +111,11 @@ export default function CheckoutPage() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="bg-white/40 backdrop-blur-sm rounded-lg p-6 inline-block">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
-                Persoonlijk Bodadvies
+            <div className="inline-block rounded-2xl bg-white/85 p-8 shadow-lg ring-1 ring-gray-900/5 backdrop-blur-md">
+              <h1 className="font-serif text-4xl tracking-tight text-gray-900 mb-3 md:text-5xl">
+                Persoonlijk bodadvies
               </h1>
-              <p className="text-lg text-gray-800">
+              <p className="text-lg text-gray-600">
                 Vul je gegevens in en ontvang binnen 48 uur professioneel advies
               </p>
             </div>
@@ -123,9 +123,9 @@ export default function CheckoutPage() {
 
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Property Summary - Semi-transparent */}
-            <div className="bg-white/40 backdrop-blur-sm rounded-lg shadow-lg p-8 h-fit">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                Woning Overzicht
+            <div className="h-fit rounded-2xl bg-white/85 p-8 shadow-xl ring-1 ring-gray-900/5 backdrop-blur-md">
+              <h2 className="font-serif text-2xl tracking-tight text-gray-900 mb-6">
+                Woning overzicht
               </h2>
               
               <div className="space-y-4">
@@ -142,22 +142,31 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
-                <div className="mt-6 p-4 bg-gray-50/20 rounded-lg">
-                  <h4 className="font-semibold text-gray-800 mb-2">Wat krijg je?</h4>
-                                      <ul className="text-sm text-gray-800 space-y-1">
-                      <li>✓ Marktanalyse van vergelijkbare woningen</li>
-                      <li>✓ Persoonlijk bodadvies op maat</li>
-                      <li>✓ Strategie tips voor onderhandeling</li>
-                      <li>✓ Binnen 48 uur in je inbox</li>
-                    </ul>
+                <div className="mt-6 rounded-xl bg-gray-50 p-5 ring-1 ring-gray-900/5">
+                  <h4 className="font-semibold text-gray-900 mb-3">Wat krijg je?</h4>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    {[
+                      'Marktanalyse van vergelijkbare woningen',
+                      'Persoonlijk bodadvies op maat',
+                      'Strategie­tips voor de onderhandeling',
+                      'Binnen 48 uur in je inbox',
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#7C8471]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
 
             {/* Contact Form - Semi-transparent */}
-            <div className="bg-white/40 backdrop-blur-sm rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                Jouw Gegevens
+            <div className="rounded-2xl bg-white/85 p-8 shadow-xl ring-1 ring-gray-900/5 backdrop-blur-md">
+              <h2 className="font-serif text-2xl tracking-tight text-gray-900 mb-6">
+                Jouw gegevens
               </h2>
 
               {submitError && (
@@ -208,12 +217,12 @@ export default function CheckoutPage() {
 
           {/* Back Button */}
           <div className="text-center mt-12">
-            <div className="bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 inline-block">
-              <button 
+            <div className="inline-block rounded-full bg-white/80 px-5 py-2.5 shadow-sm ring-1 ring-gray-900/5 backdrop-blur-md">
+              <button
                 onClick={() => router.back()}
-                className="text-gray-800 hover:text-gray-900 transition-colors"
+                className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900"
               >
-                ← Terug naar woning gegevens
+                ← Terug naar woninggegevens
               </button>
             </div>
           </div>

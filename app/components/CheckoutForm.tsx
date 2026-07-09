@@ -133,8 +133,8 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
-              errors.firstName ? 'border-red-500' : 'border-gray-400'
+            className={`w-full rounded-xl border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20 ${
+              errors.firstName ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Jouw voornaam"
           />
@@ -152,8 +152,8 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
-              errors.lastName ? 'border-red-500' : 'border-gray-400'
+            className={`w-full rounded-xl border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20 ${
+              errors.lastName ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Jouw achternaam"
           />
@@ -173,8 +173,8 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
-            errors.email ? 'border-red-500' : 'border-gray-400'
+          className={`w-full rounded-xl border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20 ${
+            errors.email ? 'border-red-500' : 'border-gray-300'
           }`}
           placeholder="jouw.naam@email.com"
         />
@@ -191,8 +191,8 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900 ${
-            errors.phone ? 'border-red-500' : 'border-gray-400'
+          className={`w-full rounded-xl border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20 ${
+            errors.phone ? 'border-red-500' : 'border-gray-300'
           }`}
           placeholder="06 12345678"
           required
@@ -211,7 +211,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
           value={formData.additionalInfo}
           onChange={handleChange}
           rows={4}
-          className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-600 text-gray-900"
+          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
           placeholder="Heb je specifieke wensen of bijzonderheden die we moeten weten voor het bodadvies?"
         />
       </div>
@@ -287,7 +287,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       )}
 
       {/* Pricing Information */}
-      <div className="bg-gray-50/20 backdrop-blur-sm p-6 rounded-lg">
+      <div className="rounded-xl bg-gray-50 p-6 ring-1 ring-gray-900/5">
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-semibold text-gray-800">
             Professioneel Bodadvies
@@ -317,8 +317,7 @@ export default function CheckoutForm({ propertyData, onSubmit }: CheckoutFormPro
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-        style={{ backgroundColor: '#1F3C88' }}
+        className="w-full rounded-xl bg-[#1F3C88] px-8 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-[#162E6B] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">

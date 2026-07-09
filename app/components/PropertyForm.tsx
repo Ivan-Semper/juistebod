@@ -112,16 +112,23 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
     <div className="w-full max-w-2xl mx-auto">
       <div className="text-center">
         {!showForm && (
-          <motion.button
-            type="button"
-            onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-[#1F3C88] font-semibold shadow-md hover:bg-white/90 transition-colors"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Start aanvraag
-            <span className="text-lg leading-none">→</span>
-          </motion.button>
+          <div>
+            <motion.button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-base font-semibold text-[#1F3C88] shadow-xl transition-colors hover:bg-white/90"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Start aanvraag
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12l-7.5 7.5M21 12H3" />
+              </svg>
+            </motion.button>
+            <p className="mt-4 text-sm text-white/80">
+              Klaar in 2 minuten · Rapport binnen 48 uur · €199,95 excl. btw
+            </p>
+          </div>
         )}
       </div>
 
@@ -132,8 +139,8 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.75, ease: 'easeOut' }}
-            className="mt-6 space-y-4 bg-white/75 rounded-2xl shadow-lg p-6 backdrop-blur-sm"
+            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="mt-6 space-y-4 rounded-2xl bg-white/85 p-6 text-left shadow-xl ring-1 ring-white/40 backdrop-blur-md md:p-8"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -145,7 +152,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                   name="postcode"
                   value={formData.postcode}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
                   placeholder="Bijv: 3815LC"
                   pattern="[0-9]{4}[A-Za-z]{2}"
                   title="Voer een geldige Nederlandse postcode in (bijv: 3815LC)"
@@ -161,7 +168,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                   name="houseNumber"
                   value={formData.houseNumber}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
                   placeholder="Bijv: 93"
                   required
                 />
@@ -177,7 +184,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                 name="fundaUrl"
                 value={formData.fundaUrl}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
                 placeholder="Plak hier je Funda woninglink"
                 required
               />
@@ -195,7 +202,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-400 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
                 placeholder="jouw.naam@email.com"
               />
             </div>
@@ -208,7 +215,7 @@ export default function PropertyForm({ onPropertyFound }: PropertyFormProps) {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium shadow-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="rounded-full bg-[#1F3C88] px-9 py-3.5 font-semibold text-white shadow-md transition-all hover:bg-[#162E6B] hover:shadow-lg disabled:opacity-50"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

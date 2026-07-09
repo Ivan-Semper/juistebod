@@ -78,7 +78,7 @@ function SuccessContent() {
         <div className="relative z-10 max-w-md mx-auto text-center p-8">
           <div className="bg-white/90 rounded-2xl shadow-xl p-8 backdrop-blur-sm">
             <div className="animate-spin h-12 w-12 border-3 border-gray-200 border-t-blue-600 rounded-full mx-auto mb-6" />
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Betaling wordt verwerkt...</h1>
+            <h1 className="font-serif text-2xl tracking-tight text-gray-900 mb-4">Betaling wordt verwerkt…</h1>
             <p className="text-gray-600">Even geduld, we controleren je betaling bij Mollie.</p>
           </div>
         </div>
@@ -104,14 +104,14 @@ function SuccessContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Betaling niet geslaagd</h1>
+            <h1 className="font-serif text-2xl tracking-tight text-gray-900 mb-4">Betaling niet geslaagd</h1>
             <p className="text-gray-700 mb-6">
               Je betaling is niet gelukt of geannuleerd. Probeer het opnieuw of neem contact met ons op.
             </p>
             <div className="space-y-3">
               <button
                 onClick={() => router.push('/checkout')}
-                className="w-full text-white font-semibold py-3 px-6 rounded-lg transition-colors hover:opacity-90"
+                className="w-full rounded-xl py-3 px-6 font-semibold text-white shadow-md transition-all hover:bg-[#162E6B] hover:shadow-lg"
                 style={{ backgroundColor: '#1F3C88' }}
               >
                 Opnieuw proberen
@@ -144,7 +144,7 @@ function SuccessContent() {
             </svg>
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+          <h1 className="font-serif text-3xl tracking-tight text-gray-900 mb-4">
             Betaling geslaagd!
           </h1>
 
@@ -155,7 +155,7 @@ function SuccessContent() {
           <div className="space-y-4">
             <button
               onClick={() => router.push('/')}
-              className="w-full text-white font-semibold py-3 px-6 rounded-lg transition-colors hover:opacity-90"
+              className="w-full rounded-xl py-3 px-6 font-semibold text-white shadow-md transition-all hover:bg-[#162E6B] hover:shadow-lg"
               style={{ backgroundColor: '#1F3C88' }}
             >
               Terug naar Home

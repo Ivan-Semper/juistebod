@@ -52,9 +52,12 @@ export default function PaymentButton({
       <button
         onClick={handlePayment}
         disabled={isLoading}
-        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+        className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#1F3C88] px-6 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-[#162E6B] hover:shadow-lg disabled:cursor-not-allowed disabled:bg-gray-400"
       >
-        {isLoading ? 'Bezig...' : `€${amount.toFixed(2)} betalen met Mollie`}
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+        </svg>
+        {isLoading ? 'Bezig...' : `Betaal €${amount.toFixed(2).replace('.', ',')} via Mollie`}
       </button>
       
       {error && (
