@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS orders (
   payment_status TEXT NOT NULL DEFAULT 'pending',
   order_status TEXT NOT NULL DEFAULT 'new',
   payment_id TEXT,
-  amount_paid DECIMAL(10, 2) DEFAULT 60.44,
+  amount_paid DECIMAL(10, 2) DEFAULT 241.94,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -66,16 +66,15 @@ CREATE INDEX IF NOT EXISTS idx_property_reports_sent_at ON property_reports(sent
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE property_reports ENABLE ROW LEVEL SECURITY;
 
--- Policy: Service role kan alles (voor server-side operaties)
-CREATE POLICY "Service role can do everything on orders"
-  ON orders FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- BELANGRIJK: geef de publieke anon-rol GEEN policy.
+-- De app benadert deze tabellen uitsluitend server-side met de service-role-key,
+-- en die omzeilt RLS. Met RLS aan en geen policy voor anon geldt: alles geweigerd.
+-- (Een policy met `USING (true)` ZONDER `TO service_role` zou voor iedereen gelden
+--  en is een datalek — doe dat dus niet.)
 
-CREATE POLICY "Service role can do everything on property_reports"
-  ON property_reports FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- Vangnet: trek table-grants voor de publieke rollen expliciet in.
+REVOKE ALL ON orders            FROM anon, authenticated;
+REVOKE ALL ON property_reports  FROM anon, authenticated;
 
 -- ============================================
 -- TRIGGER: Auto-update updated_at timestamp
