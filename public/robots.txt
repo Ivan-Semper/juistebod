@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /checkout/
 
-Sitemap: https://juistebod.nl/sitemap.xml
+Sitemap: https://www.juistebod.nl/sitemap.xml

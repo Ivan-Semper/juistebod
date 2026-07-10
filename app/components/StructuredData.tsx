@@ -5,9 +5,9 @@ export default function StructuredData() {
     name: 'JuisteBod.nl',
     description:
       'Persoonlijk woningbodadvies van ervaren makelaars. Krijg binnen 48 uur een onderbouwd bodadvies voor jouw droomwoning.',
-    url: 'https://juistebod.nl',
-    logo: 'https://juistebod.nl/Juistebod%20logo%20voorkant.png',
-    image: 'https://juistebod.nl/landing_page_photos/margaret-polinder-3DsMhQF9aB0-unsplash.jpg',
+    url: 'https://www.juistebod.nl',
+    logo: 'https://www.juistebod.nl/Juistebod%20logo%20voorkant.png',
+    image: 'https://www.juistebod.nl/landing_page_photos/margaret-polinder-3DsMhQF9aB0-unsplash.jpg',
     email: 'info@juistebod.nl',
     address: {
       '@type': 'PostalAddress',
@@ -39,7 +39,7 @@ export default function StructuredData() {
       priceCurrency: 'EUR',
       priceValidUntil: '2026-12-31',
       availability: 'https://schema.org/InStock',
-      url: 'https://juistebod.nl',
+      url: 'https://www.juistebod.nl',
     },
   };
 
@@ -94,7 +94,7 @@ export default function StructuredData() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'JuisteBod.nl',
-    url: 'https://juistebod.nl',
+    url: 'https://www.juistebod.nl',
     description:
       'Het juiste bod op elke woning. Persoonlijk woningbodadvies van een vastgoedprofessional.',
     inLanguage: 'nl-NL',

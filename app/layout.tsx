@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     template: "%s | JuisteBod.nl",
   },
   description: "Krijg binnen 48 uur persoonlijk bodadvies van een ervaren makelaar. Vergelijk je woning, ontvang een slimme biedstrategie en bied met vertrouwen. Voor €199,95 excl. BTW.",
-  metadataBase: new URL('https://juistebod.nl'),
+  metadataBase: new URL('https://www.juistebod.nl'),
   alternates: {
-    canonical: 'https://juistebod.nl',
+    canonical: 'https://www.juistebod.nl',
   },
   keywords: [
     'woningbodadvies', 'bod uitbrengen', 'huis bieden', 'biedadvies woning',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'JuisteBod.nl - Persoonlijk woningbodadvies',
     description: 'Krijg binnen 48 uur persoonlijk bodadvies van een ervaren makelaar. Vergelijk je woning, ontvang een slimme biedstrategie en bied met vertrouwen.',
-    url: 'https://juistebod.nl',
+    url: 'https://www.juistebod.nl',
     siteName: 'JuisteBod.nl',
     locale: 'nl_NL',
     type: 'website',
