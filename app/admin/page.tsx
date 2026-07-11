@@ -42,17 +42,22 @@ export default function AdminLoginPage() {
       style={{ backgroundColor: "#FAF9F6" }}
     >
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold text-center mb-8 text-gray-800">
-          JuisteBod Admin
-        </h1>
+        <div className="mb-8 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">
+            JuisteBod.nl
+          </p>
+          <h1 className="mt-2 font-serif text-3xl tracking-tight text-gray-900">
+            Beheeromgeving
+          </h1>
+        </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-lg shadow-md p-6 space-y-4"
+          className="space-y-5 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-900/5"
         >
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               Gebruikersnaam
             </label>
@@ -61,7 +66,7 @@ export default function AdminLoginPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F3C88] text-gray-900"
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
               placeholder="Gebruikersnaam"
               required
               autoComplete="username"
@@ -70,7 +75,7 @@ export default function AdminLoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               Wachtwoord
             </label>
@@ -79,26 +84,29 @@ export default function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F3C88] text-gray-900"
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#1F3C88] focus:ring-2 focus:ring-[#1F3C88]/20"
               placeholder="Wachtwoord"
               required
               autoComplete="current-password"
             />
           </div>
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">
+            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-inset ring-red-600/10">
               {error}
             </p>
           )}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-md font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full rounded-xl px-4 py-3 font-semibold text-white shadow-md transition-all hover:bg-[#162E6B] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
             style={{ backgroundColor: "#1F3C88" }}
           >
             {isLoading ? "Bezig..." : "Inloggen"}
           </button>
         </form>
+        <p className="mt-6 text-center text-xs text-gray-400">
+          Alleen voor medewerkers van JuisteBod.nl
+        </p>
       </div>
     </div>
   );

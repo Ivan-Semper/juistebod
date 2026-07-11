@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, data: orders })
     }
 
-    const orders = await DatabaseService.getAllOrders()
+    const orders = await DatabaseService.getAllOrders(500)
     return NextResponse.json({ success: true, data: orders })
 
   } catch (error) {

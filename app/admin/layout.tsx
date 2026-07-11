@@ -115,10 +115,15 @@ export default function AdminLayout({
         style={{ backgroundColor: "#1F3C88" }}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-white/20 lg:border-b-0">
-            <span className="text-lg font-semibold text-white">
-              JuisteBod Admin
-            </span>
+          <div className="flex items-center justify-between p-5 border-b border-white/20 lg:border-b-0">
+            <div>
+              <span className="block font-serif text-xl tracking-tight text-white">
+                JuisteBod
+              </span>
+              <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50">
+                Beheer
+              </span>
+            </div>
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden p-2 text-white hover:bg-white/10 rounded-md"
@@ -135,10 +140,10 @@ export default function AdminLayout({
                   key={href}
                   href={href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-white/20 text-white"
-                      : "text-white/90 hover:bg-white/10 hover:text-white"
+                      ? "bg-white/15 text-white shadow-sm ring-1 ring-inset ring-white/10"
+                      : "text-white/70 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   <Icon />
