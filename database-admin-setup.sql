@@ -46,15 +46,15 @@ INSERT INTO site_content (key, value, content_type, section, label) VALUES
 
 -- How it works
 ('how_it_works_title', 'Zo werkt het', 'text', 'how_it_works', 'Sectie titel'),
-('step1_title', 'Vul je adres in', 'text', 'how_it_works', 'Stap 1 titel'),
-('step1_text', 'Vul postcode en huisnummer in om de locatie te vinden. Funda-link is verplicht voor het bodadvies.', 'text', 'how_it_works', 'Stap 1 tekst'),
-('step1_tip', 'Funda-link helpt bij persoonlijk advies', 'text', 'how_it_works', 'Stap 1 tip'),
-('step2_title', 'Vul je gegevens in', 'text', 'how_it_works', 'Stap 2 titel'),
-('step2_text', 'Vul je contactgegevens in zodat we het advies persoonlijk kunnen maken.', 'text', 'how_it_works', 'Stap 2 tekst'),
+('step1_title', 'Plak je Funda-link', 'text', 'how_it_works', 'Stap 1 titel'),
+('step1_text', 'Heb je een huis op het oog? Vul je postcode en huisnummer in, plak de Funda-link van de woning erbij en dien je aanvraag in.', 'text', 'how_it_works', 'Stap 1 tekst'),
+('step1_tip', 'Aanvragen duurt nog geen minuut', 'text', 'how_it_works', 'Stap 1 tip'),
+('step2_title', 'Onze makelaars gaan voor je aan de slag', 'text', 'how_it_works', 'Stap 2 titel'),
+('step2_text', 'Je aanvraag komt direct terecht bij onze ervaren makelaars. Geen standaardmodel of automatische schatting, maar een handmatige analyse van de woning, de buurt en recente transacties.', 'text', 'how_it_works', 'Stap 2 tekst'),
 ('step2_tip', 'Al je gegevens worden veilig opgeslagen', 'text', 'how_it_works', 'Stap 2 tip'),
-('step3_title', 'Ontvang je rapport', 'text', 'how_it_works', 'Stap 3 titel'),
-('step3_text', 'Binnen 24 uur krijg je een uitgebreid bodadvies in je mailbox', 'text', 'how_it_works', 'Stap 3 tekst'),
-('step3_tip', 'Gemiddeld binnen 12 uur geleverd', 'text', 'how_it_works', 'Stap 3 tip'),
+('step3_title', 'Je ontvangt een onderbouwd biedadvies', 'text', 'how_it_works', 'Stap 3 titel'),
+('step3_text', 'Binnen 48 uur ontvang je een volledig en downloadbaar adviesrapport in je mailbox, inclusief 7 slimme biedtips voor een sterkere onderhandelingspositie.', 'text', 'how_it_works', 'Stap 3 tekst'),
+('step3_tip', 'Handmatig opgesteld door ervaren makelaars', 'text', 'how_it_works', 'Stap 3 tip'),
 
 -- What you get
 ('what_you_get_title', 'Wat krijg je precies?', 'text', 'what_you_get', 'Sectie titel'),

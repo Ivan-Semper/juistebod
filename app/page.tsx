@@ -504,9 +504,10 @@ export default function Home() {
       )}
 
       {/* How It Works Section */}
-      <section id="hoe-werkt-het" className="py-24 px-6 scroll-mt-20 md:py-28" style={{ backgroundColor: '#FAF9F6' }}>
-        <div className="max-w-6xl mx-auto text-center">
+      <section id="hoe-werkt-het" className="overflow-hidden py-24 px-6 scroll-mt-20 md:py-28" style={{ backgroundColor: '#FAF9F6' }}>
+        <div className="max-w-6xl mx-auto">
           <motion.div
+            className="text-center"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -515,91 +516,154 @@ export default function Home() {
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">
               In drie stappen
             </p>
-            <h2 className="font-serif text-4xl tracking-tight text-gray-900 mb-16 md:text-5xl md:mb-20">
+            <h2 className="font-serif text-4xl tracking-tight text-gray-900 md:text-5xl">
               {c('how_it_works_title', 'Zo werkt het')}
             </h2>
           </motion.div>
 
-          <motion.div
-            className="relative grid gap-12 md:grid-cols-3 md:gap-10 mb-20 items-stretch"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, staggerChildren: 0.2 }}
-          >
-            {/* Verbindingslijn tussen de stappen (alleen desktop) */}
-            <div className="pointer-events-none absolute left-[18%] right-[18%] top-8 hidden border-t-2 border-dashed border-gray-300 md:block" aria-hidden="true" />
-
-            {/* Stap 1 */}
-            <motion.div
-              className="relative flex h-full flex-col items-center text-center"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div
-                className="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full font-serif text-2xl text-white shadow-md ring-4 ring-[#FAF9F6]"
-                style={{ backgroundColor: '#1F3C88' }}
+          <div className="mt-16 space-y-20 md:mt-24 md:space-y-28">
+            {/* Stap 1 — tekst links, illustratie rechts */}
+            <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16 lg:gap-20">
+              <motion.div
+                className="order-2 text-center md:order-1 md:text-left"
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                1
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-gray-900">{c('step1_title', 'Vul je adres in')}</h3>
-              <p className="mb-5 leading-relaxed text-gray-600">
-                {c('step1_text', 'Vul postcode en huisnummer in om de locatie te vinden. Funda-link is verplicht voor het bodadvies.')}
-              </p>
-              <div className="mx-auto mt-auto flex min-h-[56px] max-w-xs items-center justify-center gap-1.5 rounded-xl bg-white p-3 text-xs text-gray-500 shadow-sm ring-1 ring-gray-900/5">
-                💡 <strong>Tip:</strong> {c('step1_tip', 'Funda-link helpt bij persoonlijk advies')}
-              </div>
-            </motion.div>
-
-            {/* Stap 2 */}
-            <motion.div
-              className="relative flex h-full flex-col items-center text-center"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div
-                className="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full font-serif text-2xl text-white shadow-md ring-4 ring-[#FAF9F6]"
-                style={{ backgroundColor: '#1F3C88' }}
+                <div className="mb-6 flex items-center justify-center gap-4 md:justify-start">
+                  <span
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-serif text-xl text-white shadow-md"
+                    style={{ backgroundColor: '#1F3C88' }}
+                  >
+                    1
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">Stap 1</span>
+                </div>
+                <h3 className="font-serif text-3xl tracking-tight text-gray-900 md:text-4xl">
+                  {c('step1_title', 'Plak je Funda-link')}
+                </h3>
+                <p className="mt-4 text-base leading-relaxed text-gray-600 md:text-lg">
+                  {c('step1_text', 'Heb je een huis op het oog? Vul je postcode en huisnummer in, plak de Funda-link van de woning erbij en dien je aanvraag in.')}
+                </p>
+                <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm text-gray-500 shadow-sm ring-1 ring-gray-900/5">
+                  ⏱️ <span><strong className="font-semibold text-gray-700">Snel:</strong> {c('step1_tip', 'Aanvragen duurt nog geen minuut')}</span>
+                </div>
+              </motion.div>
+              <motion.div
+                className="order-1 md:order-2"
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                2
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-gray-900">{c('step2_title', 'Vul je gegevens in')}</h3>
-              <p className="mb-5 leading-relaxed text-gray-600">
-                {c('step2_text', 'Vul je contactgegevens in zodat we het advies persoonlijk kunnen maken.')}
-              </p>
-              <div className="mx-auto mt-auto flex min-h-[56px] max-w-xs items-center justify-center gap-1.5 rounded-xl bg-white p-3 text-xs text-gray-500 shadow-sm ring-1 ring-gray-900/5">
-                🔒 <strong>Veilig:</strong> {c('step2_tip', 'Al je gegevens worden veilig opgeslagen')}
-              </div>
-            </motion.div>
+                <Image
+                  src="/hoe-werkt-het/stap-1-aanvraag.png"
+                  alt="Illustratie: klant dient in enkele klikken een aanvraag in via de website"
+                  width={1200}
+                  height={779}
+                  sizes="(min-width: 768px) 45vw, 90vw"
+                  className="mx-auto h-auto w-full max-w-md md:max-w-xl"
+                />
+              </motion.div>
+            </div>
 
-            {/* Stap 3 */}
-            <motion.div
-              className="relative flex h-full flex-col items-center text-center"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div
-                className="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full font-serif text-2xl text-white shadow-md ring-4 ring-[#FAF9F6]"
-                style={{ backgroundColor: '#1F3C88' }}
+            {/* Stap 2 — illustratie links, tekst rechts */}
+            <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16 lg:gap-20">
+              <motion.div
+                className="order-1"
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                3
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-gray-900">{c('step3_title', 'Ontvang je rapport')}</h3>
-              <p className="mb-5 leading-relaxed text-gray-600">
-                {c('step3_text', 'Binnen 48 uur ontvang je een volledig en onderbouwd adviesrapport in je mailbox')}
-              </p>
-              <div className="mx-auto mt-auto flex min-h-[56px] max-w-xs items-center justify-center gap-1.5 rounded-xl bg-white p-3 text-xs text-gray-500 shadow-sm ring-1 ring-gray-900/5">
-                ✓ <strong>Betrouwbaar:</strong> {c('step3_tip', 'Handmatig opgesteld door ervaren makelaars')}
-              </div>
-            </motion.div>
-          </motion.div>
+                <Image
+                  src="/hoe-werkt-het/stap-2-makelaars.png"
+                  alt="Illustratie: makelaars analyseren de woning en marktdata"
+                  width={1200}
+                  height={1184}
+                  sizes="(min-width: 768px) 40vw, 80vw"
+                  className="mx-auto h-auto w-full max-w-sm md:max-w-md"
+                />
+              </motion.div>
+              <motion.div
+                className="order-2 text-center md:text-left"
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <div className="mb-6 flex items-center justify-center gap-4 md:justify-start">
+                  <span
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-serif text-xl text-white shadow-md"
+                    style={{ backgroundColor: '#1F3C88' }}
+                  >
+                    2
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">Stap 2</span>
+                </div>
+                <h3 className="font-serif text-3xl tracking-tight text-gray-900 md:text-4xl">
+                  {c('step2_title', 'Onze makelaars gaan voor je aan de slag')}
+                </h3>
+                <p className="mt-4 text-base leading-relaxed text-gray-600 md:text-lg">
+                  {c('step2_text', 'Je aanvraag komt direct terecht bij onze ervaren makelaars. Geen standaardmodel of automatische schatting, maar een handmatige analyse van de woning, de buurt en recente transacties.')}
+                </p>
+                <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm text-gray-500 shadow-sm ring-1 ring-gray-900/5">
+                  🔒 <span><strong className="font-semibold text-gray-700">Veilig:</strong> {c('step2_tip', 'Al je gegevens worden veilig opgeslagen')}</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Stap 3 — tekst links, illustratie rechts */}
+            <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16 lg:gap-20">
+              <motion.div
+                className="order-2 text-center md:order-1 md:text-left"
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <div className="mb-6 flex items-center justify-center gap-4 md:justify-start">
+                  <span
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-serif text-xl text-white shadow-md"
+                    style={{ backgroundColor: '#1F3C88' }}
+                  >
+                    3
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">Stap 3</span>
+                </div>
+                <h3 className="font-serif text-3xl tracking-tight text-gray-900 md:text-4xl">
+                  {c('step3_title', 'Je ontvangt een onderbouwd biedadvies')}
+                </h3>
+                <p className="mt-4 text-base leading-relaxed text-gray-600 md:text-lg">
+                  {c('step3_text', 'Binnen 48 uur ontvang je een volledig en downloadbaar adviesrapport in je mailbox, inclusief 7 slimme biedtips voor een sterkere onderhandelingspositie.')}
+                </p>
+                <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm text-gray-500 shadow-sm ring-1 ring-gray-900/5">
+                  ✓ <span><strong className="font-semibold text-gray-700">Betrouwbaar:</strong> {c('step3_tip', 'Handmatig opgesteld door ervaren makelaars')}</span>
+                </div>
+              </motion.div>
+              <motion.div
+                className="order-1 md:order-2"
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <Image
+                  src="/hoe-werkt-het/stap-3-rapport.png"
+                  alt="Illustratie: makelaar presenteert het onderbouwde adviesrapport"
+                  width={1200}
+                  height={886}
+                  sizes="(min-width: 768px) 45vw, 90vw"
+                  className="mx-auto h-auto w-full max-w-md md:max-w-xl"
+                />
+              </motion.div>
+            </div>
+          </div>
 
           {/* Prijs */}
           <motion.div
-            className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-900/5 md:p-10"
+            className="mx-auto mt-20 max-w-md rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-900/5 md:mt-28 md:p-10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
